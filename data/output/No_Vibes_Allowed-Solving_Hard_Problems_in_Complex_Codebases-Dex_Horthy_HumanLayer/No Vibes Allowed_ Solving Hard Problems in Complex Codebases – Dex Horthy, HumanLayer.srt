@@ -1,0 +1,2074 @@
+1
+00:00:13,755 --> 00:00:22,400
+[music] Hi everybody.
+[音乐] 大家好。
+
+2
+00:00:22,400 --> 00:00:24,000
+How y'all doing?
+你们都怎么样？
+
+3
+00:00:23,990 --> 00:00:24,560
+>> It's exciting.
+>> 非常激动。
+
+4
+00:00:24,560 --> 00:00:25,359
+I'm Dex.
+我是Dex。
+
+5
+00:00:25,359 --> 00:00:27,119
+Uh, as they did in the great intro,
+呃，在那个伟大的开场介绍中，
+
+6
+00:00:27,119 --> 00:00:29,039
+I've been hacking on agents for a while.
+我一直在研究代理程序。
+
+7
+00:00:29,039 --> 00:00:34,640
+Um, our talk 12 factor agents at AI engineer in June was one of the top talks of all time.
+嗯，我们在六月份的AI工程师讨论的12因素代理程序是所有时间里最受欢迎的演讲之一。
+
+8
+00:00:34,640 --> 00:00:36,000
+Uh, I think top eight or something.
+呃，我认为是前八名之类的。
+
+9
+00:00:36,000 --> 00:00:38,160
+One of the best ones from from AI engineer in June.
+AI 工程师六月份最好的文章之一。
+
+10
+00:00:38,150 --> 00:00:41,040
+May or may not have said something about context engineering.
+可能会也可能不会谈论上下文工程。
+
+11
+00:00:41,040 --> 00:00:42,480
+Um, why am I here today?
+呃，我今天为什么会在这里？
+
+12
+00:00:42,480 --> 00:00:43,920
+What am I here to talk about?
+我来这里要谈什么？
+
+13
+00:00:43,920 --> 00:00:47,039
+Um, I want to talk about one of my favorite talks from AI engineer in June.
+嗯，我想谈谈我最喜欢的六月份人工智能工程师的演讲之一。
+
+14
+00:00:47,039 --> 00:00:49,200
+And I know we all got the update from Eigor yesterday,
+我知道昨天我们都收到了 Eigor 的最新消息，
+
+15
+00:00:49,200 --> 00:00:50,640
+but they wouldn't let me change my slides.
+但他们不让我改变我的幻灯片。
+
+16
+00:00:50,640 --> 00:00:53,920
+So, this is going to be about what Eigor talked about in June.
+所以，这就是 Eigor 在六月谈到的内容。
+
+17
+00:00:53,920 --> 00:01:02,800
+uh basically that they surveyed a 100,000 developers across all company sizes and they found that most of the time you use AI for software engineering you're doing a lot of rework a
+呃，基本上他们调查了 100,000 名不同规模公司的开发人员，他们发现大多数时候你使用人工智能进行软件工程，你会做很多返工
+
+18
+00:01:02,800 --> 00:01:12,479
+lot of codebase churn uh and it doesn't really work well for complex tasks brownfield code bases um and you can see in the chart basically you are shipping a lot more but a lot of it
+很多代码库流失，呃，它对于复杂的任务来说并不能很好地工作棕地代码库嗯，你可以在图表中看到基本上你正在运送更多，但很多
+
+19
+00:01:12,479 --> 00:01:23,920
+is just reworking the slop that you shipped last week so uh and then the other side right was that uh if you're doing green field little versel dashboard something like this then it's
+只是重新处理你上周发货的污水，所以呃，然后另一边是呃，如果你正在做绿地小维塞尔仪表板，就像这样，那么它就是
+
+20
+00:01:23,920 --> 00:01:24,960
+going to work great.
+工作会很好。
+
+21
+00:01:24,960 --> 00:01:28,479
+Uh if you're going to go in a 10-year-old Java at codebase,
+呃，如果你打算在代码库中使用 10 年前的 Java，
+
+22
+00:01:28,479 --> 00:01:29,520
+maybe not so much.
+也许没那么多。
+
+23
+00:01:29,520 --> 00:01:33,680
+And this matched my experience personally and talking to a lot of founders and great engineers,
+这符合我个人的经历以及与许多创始人和伟大工程师的交谈，
+
+24
+00:01:33,680 --> 00:01:35,759
+too much slop uh tech debt factory.
+科技债务工厂太多了。
+
+25
+00:01:35,759 --> 00:01:37,360
+It's just it's not going to work from our codebase.
+只是它在我们的代码库中不起作用。
+
+26
+00:01:37,360 --> 00:01:40,159
+Like maybe someday when the models get better,
+就像也许有一天当模型变得更好时，
+
+27
+00:01:40,159 --> 00:01:42,400
+but that's what context engineering is all about.
+但这就是上下文工程的全部内容。
+
+28
+00:01:42,400 --> 00:01:44,960
+How can we get the most out of today's models?
+我们如何才能充分利用当今的模型？
+
+29
+00:01:44,960 --> 00:01:46,399
+How do we manage our context window?
+我们如何管理我们的上下文窗口？
+
+30
+00:01:46,399 --> 00:01:48,159
+So we talked about this in August.
+所以我们在八月份讨论过这个问题。
+
+31
+00:01:48,159 --> 00:01:49,840
+Um I have to confess something.
+嗯，我必须承认一件事。
+
+32
+00:01:49,840 --> 00:01:51,680
+The first time I used cloud code,
+第一次使用云代码，
+
+33
+00:01:51,680 --> 00:01:52,960
+I was not impressed.
+我没有留下深刻的印象。
+
+34
+00:01:52,960 --> 00:01:54,240
+It was like, okay, this is a little bit better.
+就好像，好吧，这样好一点了。
+
+35
+00:01:54,240 --> 00:01:54,560
+I get it.
+我得到它。
+
+36
+00:01:54,560 --> 00:01:55,840
+I like the UX.
+我喜欢用户体验。
+
+37
+00:01:55,840 --> 00:01:59,360
+Um, but since then, we as a team figured something out.
+嗯，但从那时起，我们作为一个团队找到了一些办法。
+
+38
+00:01:59,360 --> 00:02:01,200
+Um, that we were actually able to get,
+嗯，我们实际上能够得到，
+
+39
+00:02:01,200 --> 00:02:02,799
+you know, 2 to 3x more throughput.
+您知道，吞吐量提高了 2 到 3 倍。
+
+40
+00:02:02,799 --> 00:02:07,920
+And we were shipping so much that we had no choice but to change the way we collaborated.
+我们的出货量如此之大，以至于我们别无选择，只能改变我们的合作方式。
+
+41
+00:02:07,920 --> 00:02:10,959
+We rewired everything about how we build software.
+我们重新构建了软件构建方式的一切。
+
+42
+00:02:10,959 --> 00:02:12,160
+Uh, it was a team of three.
+呃，这是一个三人小组。
+
+43
+00:02:12,160 --> 00:02:12,959
+It took eight weeks.
+花了八个星期。
+
+44
+00:02:12,959 --> 00:02:14,800
+It was really freaking hard.
+真的是太难了。
+
+45
+00:02:14,800 --> 00:02:15,920
+Uh, but now that we solved it,
+呃，但是既然我们解决了这个问题，
+
+46
+00:02:15,920 --> 00:02:16,959
+we're we're never going back.
+我们是我们永远不会回去。
+
+47
+00:02:16,959 --> 00:02:18,400
+This is the whole no slop thing.
+这就是整个无污点的事情。
+
+48
+00:02:18,400 --> 00:02:23,200
+I think I think we got somewhere with this went super viral on HackerNews in September.
+我认为我们已经取得了一些进展，这在 9 月份的 HackerNews 上非常火爆。
+
+49
+00:02:23,200 --> 00:02:28,400
+Uh we have thousands of folks who have gone on to GitHub and grabbed our you know research plan implement prompt system.
+呃，我们有成千上万的人访问了 GitHub，并获取了我们的研究计划实施提示系统。
+
+50
+00:02:28,400 --> 00:02:38,160
+Um so the goals here which we kind of backed our way into we need AI that can work well in brownfield code bases that can solve complex problems.
+嗯，所以我们支持的目标是，我们需要人工智能能够在棕地代码库中很好地工作，从而解决复杂的问题。
+
+51
+00:02:38,160 --> 00:02:39,440
+No slop, right?
+没有漏水，对吧？
+
+52
+00:02:39,440 --> 00:02:40,720
+No more slop.
+不再有任何溢出。
+
+53
+00:02:40,720 --> 00:02:42,640
+Uh and we had to maintain mental alignment.
+呃，我们必须保持心理一致。
+
+54
+00:02:42,640 --> 00:02:44,560
+I'll talk a little bit more about what that means in a minute.
+我稍后会详细讨论这意味着什么。
+
+55
+00:02:44,550 --> 00:02:47,920
+And of course we want to spend with everything we want to spend as many tokens as possible.
+当然，我们希望花尽可能多的代币来花我们想要花的一切。
+
+56
+00:02:47,920 --> 00:02:52,000
+what we can offload meaningfully to the AI is really really important.
+我们可以向人工智能有意义地卸载的东西真的非常重要。
+
+57
+00:02:52,000 --> 00:02:53,519
+Um, super high leverage.
+嗯，超高杠杆。
+
+58
+00:02:53,519 --> 00:02:56,400
+So, this is advanced context engineering for coding agents.
+所以，这是编码代理的高级上下文工程。
+
+59
+00:02:56,400 --> 00:02:59,040
+Um, I'll start with kind of like framing this.
+嗯，我将从类似框架开始。
+
+60
+00:02:59,040 --> 00:03:07,840
+The most naive way to use a coding agent is to ask it for something and then tell it why it's wrong and resteere it and ask and ask and ask until you run out of context or you give
+使用编码代理的最天真的方法是向它询问一些东西，然后告诉它为什么它是错误的，然后重新引导它，问，问，问，直到你脱离上下文或者你给出
+
+61
+00:03:07,840 --> 00:03:09,599
+up or you cry.
+起来，否则你会哭。
+
+62
+00:03:09,599 --> 00:03:11,680
+Um, we can be a little bit smarter about this.
+嗯，我们可以在这方面更聪明一点。
+
+63
+00:03:11,680 --> 00:03:16,720
+Most people discover this pretty early on in their AI like exploration.
+大多数人在他们的人工智能探索中很早就发现了这一点。
+
+64
+00:03:16,720 --> 00:03:24,159
+uh is that it might be better if you start a conversation and you're off track that uh you just start a new context window.
+呃，如果你开始一个对话，而你偏离了轨道，呃，你只是开始一个新的上下文窗口，那可能会更好。
+
+65
+00:03:24,149 --> 00:03:25,440
+You say, "Okay, we went down that path.
+你说：“好吧，我们就沿着那条路走了。
+
+66
+00:03:25,430 --> 00:03:26,000
+Let's start again.
+让我们重新开始吧。
+
+67
+00:03:26,000 --> 00:03:31,840
+Same prompt, same task, but this time we're going to go down this path and like don't go over there cuz that doesn't work."
+相同的提示，相同的任务，但这一次我们要走这条路，并且不要去那里，因为那行不通。”
+
+68
+00:03:31,840 --> 00:03:35,840
+So, uh how do you know when it's time to start over?
+那么，呃，你怎么知道什么时候该重新开始呢？
+
+69
+00:03:35,830 --> 00:03:41,440
+If you see this, it's probably time to start over,
+如果你看到这个，可能是时候重新开始了，
+
+70
+00:03:41,440 --> 00:03:41,680
+right?
+正确的？
+
+71
+00:03:41,670 --> 00:03:46,000
+This is what Claude says when you tell it it's screwing up.
+当你告诉它它搞砸了时，克劳德就是这么说的。
+
+72
+00:03:45,990 --> 00:03:47,840
+Um, so we can be even smarter about this.
+嗯，所以我们可以在这方面变得更聪明。
+
+73
+00:03:47,840 --> 00:03:50,480
+We can do what I call intentional compaction.
+我们可以做我所说的有意压缩。
+
+74
+00:03:50,480 --> 00:03:53,280
+Um, and this is basically whether you're on track or not,
+嗯，这基本上就是你是否走上正轨，
+
+75
+00:03:53,280 --> 00:03:59,200
+you can take uh your existing context window and ask the agent to compress it down into a markdown file.
+您可以使用现有的上下文窗口并要求代理将其压缩到一个 markdown 文件中。
+
+76
+00:03:59,200 --> 00:04:00,720
+You can review this, you can tag it,
+您可以查看此内容，可以标记它，
+
+77
+00:04:00,720 --> 00:04:02,400
+and then when the new agent starts,
+然后当新代理启动时，
+
+78
+00:04:02,400 --> 00:04:07,200
+it gets straight to work instead of having to do all that searching and codebase understanding and getting caught up.
+它可以直接工作，而不必进行所有搜索和代码库理解并陷入困境。
+
+79
+00:04:07,200 --> 00:04:09,360
+Um, what goes into compaction?
+嗯，压缩是做什么的？
+
+80
+00:04:09,360 --> 00:04:13,120
+Well, the question is like what takes up space in your context window.
+嗯，问题就像什么占用了上下文窗口中的空间。
+
+81
+00:04:13,120 --> 00:04:15,599
+So, um, it's looking for files,
+所以，嗯，它正在寻找文件，
+
+82
+00:04:15,589 --> 00:04:18,560
+it's understanding code flow, it's editing files,
+它正在理解代码流程，它正在编辑文件，
+
+83
+00:04:18,560 --> 00:04:20,000
+it's test and build output.
+这是测试和构建输出。
+
+84
+00:04:20,000 --> 00:04:24,960
+And if you have one of those MCPs that's dumping JSON and a bunch of UU ids into your context window,
+如果您有一个 MCP 将 JSON 和一堆 UU id 转储到您的上下文窗口中，
+
+85
+00:04:24,960 --> 00:04:26,960
+you know, God help you.
+你知道，上帝会帮助你。
+
+86
+00:04:26,960 --> 00:04:28,479
+Uh, so what should we compact?
+呃，那么我们应该压缩什么？
+
+87
+00:04:28,479 --> 00:04:31,520
+I'll get more specifics here, but this is a really good compaction.
+我将在这里了解更多细节，但这是一个非常好的压缩。
+
+88
+00:04:31,520 --> 00:04:33,120
+This is exactly what we're working on.
+这正是我们正在努力的方向。
+
+89
+00:04:33,120 --> 00:04:37,120
+The exact files and line numbers that matter to the problem that we're solving.
+对我们正在解决的问题重要的确切文件和行号。
+
+90
+00:04:37,120 --> 00:04:39,759
+Um, why are we so obsessed with context?
+嗯，为什么我们如此痴迷于背景？
+
+91
+00:04:39,759 --> 00:04:42,639
+Because LMS are actually got roasted on YouTube for this one.
+因为 LMS 实际上因为这个而在 YouTube 上受到了批评。
+
+92
+00:04:42,639 --> 00:04:45,040
+And they're not pure functions cuz they're nondeterministic,
+它们不是纯函数，因为它们是不确定的，
+
+93
+00:04:45,040 --> 00:04:46,160
+but they are stateless.
+但他们是无国籍的。
+
+94
+00:04:46,160 --> 00:04:52,400
+And the only way to get better better performance out of an LLM is to put better tokens in and then you get better tokens out.
+从 LLM 中获得更好表现的唯一方法就是投入更好的代币，然后获得更好的代币。
+
+95
+00:04:52,400 --> 00:04:59,680
+And so every turn of the loop when Claude is picking the next tool or any coding agent is picking the next and there could be hundreds of right next steps and hundreds of wrong next
+因此，当克劳德选择下一个工具或任何编码代理选择下一个工具时，循环的每一个回合都可能有数百个正确的下一步和数百个错误的下一步
+
+96
+00:04:59,680 --> 00:05:00,400
+steps.
+步骤。
+
+97
+00:05:00,400 --> 00:05:05,600
+But the only thing that influences what comes out next is what is in the conversation so far.
+但唯一影响接下来的结果的是目前对话中的内容。
+
+98
+00:05:05,600 --> 00:05:08,720
+So we're going to optimize this context window for correctness,
+所以我们将优化这个上下文窗口以确保正确性，
+
+99
+00:05:08,720 --> 00:05:11,440
+completeness, size, and a little bit of trajectory.
+完整性、大小和一点点轨迹。
+
+100
+00:05:11,440 --> 00:05:13,680
+And the trajectory one is interesting because a lot of people say,
+这个轨迹很有趣，因为很多人说，
+
+101
+00:05:13,680 --> 00:05:17,199
+"Well, I I told the agent to do something and it did [clears throat] something wrong.
+“好吧，我告诉特工做某事，但它（清了清喉咙）做了错事。
+
+102
+00:05:17,199 --> 00:05:20,960
+So, I corrected it and I yelled at it and then it did something wrong again and then I yelled at it."
+所以，我纠正了它，我对它大喊大叫，然后它又做错了，然后我对它大喊大叫。”
+
+103
+00:05:20,960 --> 00:05:23,039
+And then the LM is looking at this conversation says,
+然后 LM 看着这段对话说：
+
+104
+00:05:23,029 --> 00:05:23,520
+"Okay, cool.
+“好吧，酷。
+
+105
+00:05:23,520 --> 00:05:24,160
+I did something wrong.
+我做错了什么。
+
+106
+00:05:24,160 --> 00:05:26,560
+The human yelled at me and then I did something wrong and the human yelled at me."
+那个人对我大喊大叫，然后我做了错事，那个人对我大喊大叫。”
+
+107
+00:05:26,560 --> 00:05:33,120
+So, the next most likely conver token in this conversation is I better do something wrong so the human can yell at me again.
+因此，在这次对话中，下一个最有可能的转换标记是我最好做错事，这样人们就可以再次对我大喊大叫。
+
+108
+00:05:33,120 --> 00:05:35,280
+So, mind be mindful of your trajectory.
+所以，请注意你的轨迹。
+
+109
+00:05:35,280 --> 00:05:36,639
+If you were going to invert this,
+如果你要颠倒这个，
+
+110
+00:05:36,639 --> 00:05:39,039
+the worst thing you can have is incorrect information,
+你能得到的最糟糕的事情就是错误的信息，
+
+111
+00:05:39,039 --> 00:05:42,320
+then missing information, and then just too much noise.
+然后是信息缺失，然后是太多噪音。
+
+112
+00:05:42,320 --> 00:05:46,720
+Um, if you like equations, there's a dumb equation if you want to think about it this way.
+嗯，如果你喜欢方程式，如果你想以这种方式思考的话，就会有一个愚蠢的方程式。
+
+113
+00:05:46,720 --> 00:05:50,479
+Um, Jeff Huntley uh did a lot of research on coding agents.
+嗯，杰夫亨特利呃对编码代理做了很多研究。
+
+114
+00:05:50,479 --> 00:05:51,840
+Uh, he put it really well.
+嗯，他说得真好。
+
+115
+00:05:51,840 --> 00:05:53,680
+Just the more you use the context window,
+只是你使用上下文窗口的次数越多，
+
+116
+00:05:53,680 --> 00:05:55,280
+the worse outcomes you'll get.
+你会得到更糟糕的结果。
+
+117
+00:05:55,270 --> 00:05:59,680
+This leads to a concept I'm in a very very academic concept called the dumb zone.
+这导致了一个概念，我处于一个非常非常学术的概念中，称为“哑区”。
+
+118
+00:05:59,680 --> 00:06:01,199
+So, you have your context window.
+这样，您就有了上下文窗口。
+
+119
+00:06:01,189 --> 00:06:03,520
+You have 168,000 tokens roughly.
+您大约有 168,000 个代币。
+
+120
+00:06:03,520 --> 00:06:05,440
+Some are reserved for output and compaction.
+有些保留用于输出和压缩。
+
+121
+00:06:05,430 --> 00:06:06,720
+This varies by model.
+这因型号而异。
+
+122
+00:06:06,720 --> 00:06:08,960
+Um, but we'll use cloud code as an example here.
+嗯，但我们将在这里使用云代码作为示例。
+
+123
+00:06:08,960 --> 00:06:14,479
+Around the 40% line is where you're going to start to see some diminishing returns depending on your task.
+在 40% 线附近，您将开始看到一些收益递减，具体取决于您的任务。
+
+124
+00:06:14,479 --> 00:06:17,360
+Um, if you have too many MCPs in your coding agent,
+嗯，如果你的编码代理中有太多 MCP，
+
+125
+00:06:17,360 --> 00:06:21,039
+you are doing all your work in the dumb zone and you're never going to get good results.
+你所有的工作都在愚蠢的区域里进行，你永远不会得到好的结果。
+
+126
+00:06:21,039 --> 00:06:21,840
+People talked about this.
+人们议论此事。
+
+127
+00:06:21,840 --> 00:06:22,880
+I'm not going to talk about that one.
+我不打算谈论那个。
+
+128
+00:06:22,880 --> 00:06:23,759
+Your mileage may vary.
+您的里程可能会有所不同。
+
+129
+00:06:23,759 --> 00:06:26,319
+40% is like it depends on how complex the task is,
+40% 好像这取决于任务的复杂程度，
+
+130
+00:06:26,319 --> 00:06:28,560
+but this is kind of a good guideline.
+但这是一个很好的指导方针。
+
+131
+00:06:28,560 --> 00:06:34,639
+Um so back to compaction or as I will call it from now on cleverly avoiding the dumb zone.
+嗯，回到压缩，或者从现在起我会称之为巧妙地避开哑区。
+
+132
+00:06:34,639 --> 00:06:36,400
+Um we can do sub agents.
+嗯，我们可以做分代理。
+
+133
+00:06:36,400 --> 00:06:44,720
+Um if you have a front-end sub aent and a backend sub aent and a QA sub aent and a data data scientist sub aent please stop.
+嗯，如果您有前端子代理、后端子代理、QA 子代理和数据数据科学家子代理，请停止。
+
+134
+00:06:44,720 --> 00:06:47,360
+Sub aents are not for anthropomorphizing roles.
+子代理不适用于拟人化角色。
+
+135
+00:06:47,360 --> 00:06:49,120
+They are for controlling context.
+它们用于控制上下文。
+
+136
+00:06:49,120 --> 00:06:57,440
+And so what you can do is if you want to go find how something works in a large codebase um you can steer the coding agent to do this if it supports sub agents or you can build your
+因此，您可以做的是，如果您想了解某些内容在大型代码库中的工作原理，那么您可以引导编码代理执行此操作（如果它支持子代理），或者您可以构建自己的
+
+137
+00:06:57,440 --> 00:06:58,560
+own sub agent system.
+自己的子代理系统。
+
+138
+00:06:58,560 --> 00:07:07,280
+But basically you say hey go find how this works and it can fork out a new context window that is going to go do all that reading and searching and finding and reading entire files
+但基本上你会说嘿，去看看它是如何工作的，它可以分出一个新的上下文窗口，该窗口将执行所有读取、搜索、查找和读取整个文件的操作
+
+139
+00:07:07,280 --> 00:07:17,520
+and understanding the codebase and then just return a really really succinct message back up to the parent agent of just like hey the file you want is here.
+并了解代码库，然后将一条非常非常简洁的消息返回给父代理，就像嘿，您想要的文件在这里。
+
+140
+00:07:17,520 --> 00:07:20,639
+parent agent can read that one file and get straight to work.
+父代理可以读取该文件并直接开始工作。
+
+141
+00:07:20,639 --> 00:07:22,160
+And so this is really powerful.
+所以这真的很强大。
+
+142
+00:07:22,160 --> 00:07:27,440
+If you wield these correctly, you can get good responses like this and then you can manage your context really,
+如果你正确运用这些，你可以获得像这样的良好响应，然后你可以真正管理你的上下文，
+
+143
+00:07:27,440 --> 00:07:28,639
+really well.
+真的很好。
+
+144
+00:07:28,639 --> 00:07:35,280
+Um, what works even better than sub agents or like a layer on top of sub aents is a workflow I call frequent intentional compaction.
+嗯，比子代理或子代理之上的一层更有效的是我称之为频繁有意压缩的工作流程。
+
+145
+00:07:35,280 --> 00:07:37,440
+We're going to talk about research plan implement in a minute,
+我们马上要讨论研究计划的实施，
+
+146
+00:07:37,440 --> 00:07:41,440
+but like the point is you're constantly st keeping your context window small.
+但关键是你要不断地保持你的上下文窗口较小。
+
+147
+00:07:41,440 --> 00:07:45,280
+You're building your entire workflow around context management.
+您正在围绕上下文管理构建整个工作流程。
+
+148
+00:07:45,280 --> 00:07:46,720
+So comes in three phases.
+所以分为三个阶段。
+
+149
+00:07:46,710 --> 00:07:48,960
+research, plan, implement.
+研究、计划、实施。
+
+150
+00:07:48,960 --> 00:07:51,840
+Um, and we're going to try to stay in the smart zone the whole time.
+嗯，我们将尽力始终保持在智能区域。
+
+151
+00:07:51,840 --> 00:07:54,240
+So, the research is all about understanding how the system works,
+因此，研究的重点是了解系统如何工作，
+
+152
+00:07:54,240 --> 00:07:56,160
+finding the right files, staying objective.
+找到正确的文件，保持客观。
+
+153
+00:07:56,160 --> 00:07:58,080
+Here's a prompt you can use to do research.
+这是您可以用来进行研究的提示。
+
+154
+00:07:58,080 --> 00:08:00,720
+Here's the output of um, a research prompt.
+这是嗯的输出，一个研究提示。
+
+155
+00:08:00,720 --> 00:08:01,520
+These are all open source.
+这些都是开源的。
+
+156
+00:08:01,520 --> 00:08:03,520
+You can go grab them and play with them yourself.
+你可以自己去抓住它们并和它们一起玩。
+
+157
+00:08:03,520 --> 00:08:06,479
+Um, planning, you're going to outline the exact steps.
+嗯，计划，你要概述确切的步骤。
+
+158
+00:08:06,479 --> 00:08:08,160
+You're going to include file names and line snippets.
+您将包含文件名和行片段。
+
+159
+00:08:08,160 --> 00:08:11,280
+You're going to be very explicit about how we're going to test things after every change.
+您将非常明确地了解每次更改后我们将如何测试事物。
+
+160
+00:08:11,280 --> 00:08:12,639
+Here's a good planning prompt.
+这是一个很好的规划提示。
+
+161
+00:08:12,639 --> 00:08:13,520
+Here's one of our plans.
+这是我们的计划之一。
+
+162
+00:08:13,520 --> 00:08:15,360
+It's got actual code snippets in it.
+它里面有实际的代码片段。
+
+163
+00:08:15,360 --> 00:08:16,879
+Um, and then we're gonna implement.
+嗯，然后我们就要实施。
+
+164
+00:08:16,869 --> 00:08:18,000
+And if you read one of these plans,
+如果你读过这些计划之一
+
+165
+00:08:18,000 --> 00:08:22,800
+you can see very easily how the dumbest model in the world is probably not going to screw this up.
+你可以很容易地看出世界上最愚蠢的模型可能不会把事情搞砸。
+
+166
+00:08:22,800 --> 00:08:26,479
+Um, so we just go through and we run the plan and we keep the context low.
+嗯，所以我们只是过一遍并运行计划，并且保持低调。
+
+167
+00:08:26,479 --> 00:08:27,599
+As a planning prompt, like I said,
+正如我所说，作为计划提示，
+
+168
+00:08:27,599 --> 00:08:29,680
+it's the least exciting part of the process.
+这是整个过程中最不令人兴奋的部分。
+
+169
+00:08:29,680 --> 00:08:31,120
+Um, I wanted to put this into practice.
+嗯，我想将其付诸实践。
+
+170
+00:08:31,120 --> 00:08:34,000
+So, working for us, uh, I do a podcast with my buddy uh,
+所以，为我们工作，呃，我和我的朋友一起做一个播客，呃，
+
+171
+00:08:33,990 --> 00:08:36,880
+Vibv, who's the CEO of a company called Boundary ML.
+Vibv 是一家名为 Boundary ML 的公司的首席执行官。
+
+172
+00:08:36,880 --> 00:08:43,440
+Uh, and I said, "Hey, I'm going to try to oneshot a fix to your 300,000line Rust codebase for a programming language."
+呃，我说，“嘿，我将尝试一次性修复您的 300,000 行 Rust 编程语言代码库。”
+
+173
+00:08:43,430 --> 00:08:45,200
+Um, and the whole episode goes in,
+嗯，整个情节都在，
+
+174
+00:08:45,200 --> 00:08:46,160
+it's like an hour and a half.
+大约一个半小时。
+
+175
+00:08:46,160 --> 00:08:47,519
+Uh, I'm not going to talk through it right now,
+呃，我现在不打算谈论这个，
+
+176
+00:08:47,519 --> 00:08:49,839
+but we built a bunch of research and then we threw them out because they were bad.
+但我们做了很多研究，然后因为它们不好而把它们扔掉了。
+
+177
+00:08:49,829 --> 00:08:53,120
+And then we made a plan and we made a plan without research and with research and compared all the results.
+然后我们制定了一个计划，我们制定了一个没有研究和有研究的计划，并比较了所有的结果。
+
+178
+00:08:53,120 --> 00:08:54,160
+It's a fun time.
+这是一段有趣的时光。
+
+179
+00:08:54,160 --> 00:08:55,839
+Uh, by that was Monday night.
+呃，那时是周一晚上。
+
+180
+00:08:55,839 --> 00:09:03,680
+By Tuesday morning, we were on the show and the CTO had like seen the PR and like didn't realize I was doing it as a bit for a podcast and basically was like,
+到了周二早上，我们参加了节目，首席技术官好像看到了公关，并且没有意识到我这样做是为了播客，基本上是这样的，
+
+181
+00:09:03,670 --> 00:09:04,320
+"Yeah, this looks good.
+“是的，这看起来不错。
+
+182
+00:09:04,320 --> 00:09:05,519
+We'll get in the next release."
+我们将在下一个版本中发布。”
+
+183
+00:09:05,519 --> 00:09:07,600
+He I think he was a little confused.
+他我觉得他有点困惑。
+
+184
+00:09:07,600 --> 00:09:09,120
+Um, here's the the plan.
+嗯，这是计划。
+
+185
+00:09:09,120 --> 00:09:15,360
+But anyways, uh, yeah, confirmed works in brownfield code bases and no slop.
+但无论如何，呃，是的，在棕地代码库中确认可以工作并且没有任何问题。
+
+186
+00:09:15,360 --> 00:09:17,519
+But I wanted to see if we could solve complex problems.
+但我想看看我们能否解决复杂的问题。
+
+187
+00:09:17,519 --> 00:09:19,360
+So, Vib was still a little skeptical.
+所以，Vib还是有些怀疑的。
+
+188
+00:09:19,360 --> 00:09:24,880
+I sat down, we sat down for like 7 hours on a Saturday and we shipped 35,000 lines of code to BAML.
+我坐下来，我们在周六坐了大约 7 个小时，向 BAML 发送了 35,000 行代码。
+
+189
+00:09:24,880 --> 00:09:26,800
+One of the PRs got merged like a week later.
+其中一个 PR 大约一周后就被合并了。
+
+190
+00:09:26,800 --> 00:09:28,800
+I will say some of this is codegen.
+我会说其中一些是代码生成。
+
+191
+00:09:28,800 --> 00:09:29,920
+You know, you update your behavior.
+你知道，你会更新你的行为。
+
+192
+00:09:29,920 --> 00:09:31,519
+All the golden files update and stuff,
+所有黄金文件更新之类的，
+
+193
+00:09:31,519 --> 00:09:33,519
+but we shipped a lot of code that day.
+但那天我们发送了很多代码。
+
+194
+00:09:33,519 --> 00:09:36,880
+Um, he estimates it was about 1 to 2 weeks and 7 hours.
+嗯，他估计大约需要 1 到 2 周零 7 个小时。
+
+195
+00:09:36,880 --> 00:09:38,240
+And uh, so cool.
+呃，太酷了。
+
+196
+00:09:38,240 --> 00:09:40,320
+We can solve complex problems.
+我们可以解决复杂的问题。
+
+197
+00:09:40,310 --> 00:09:41,360
+There are limits to this.
+这也是有限制的。
+
+198
+00:09:41,360 --> 00:09:42,880
+I sat down with my buddy Blake.
+我和我的好友布莱克坐下来。
+
+199
+00:09:42,880 --> 00:09:46,160
+We tried to remove Hadoop dependencies from Parket Java.
+我们尝试从 Parket Java 中删除 Hadoop 依赖项。
+
+200
+00:09:46,160 --> 00:09:47,839
+If you know what Paret Java is,
+如果你知道 Paret Java 是什么，
+
+201
+00:09:47,839 --> 00:09:52,880
+I'm sorry uh for whatever happened to you to get you to this point in your career.
+对于发生在你身上的一切让你的职业生涯走到这一步，我感到很抱歉。
+
+202
+00:09:52,880 --> 00:09:54,560
+Uh it did not go well.
+呃，进展不太顺利。
+
+203
+00:09:54,560 --> 00:09:56,880
+Uh here's the plans, here's the research.
+呃，这是计划，这是研究。
+
+204
+00:09:56,880 --> 00:10:00,160
+Uh at a certain point, we threw everything out and we actually went back to the whiteboard.
+呃，在某个时刻，我们扔掉了所有东西，实际上又回到了白板。
+
+205
+00:10:00,160 --> 00:10:03,600
+We had to actually once we had learned where were the where all the foot guns were,
+事实上，一旦我们了解到所有脚枪在哪里，我们就必须这样做，
+
+206
+00:10:03,600 --> 00:10:06,880
+we we went back to okay, how is this actually going to fit together?
+我们回到好吧，这实际上是如何结合在一起的？
+
+207
+00:10:06,880 --> 00:10:10,720
+Um, and this brings me to a really interesting point that Jake's going to talk about later.
+嗯，这让我想到了杰克稍后要谈论的一个非常有趣的观点。
+
+208
+00:10:10,720 --> 00:10:13,120
+Uh, do not outsource the thinking.
+呃，不要外包思维。
+
+209
+00:10:13,120 --> 00:10:14,720
+AI cannot replace thinking.
+人工智能无法取代思维。
+
+210
+00:10:14,720 --> 00:10:19,600
+It can only amplify the thinking you have done or the lack of thinking you have done.
+它只能放大你已经做过的思考或者你没有做过的思考。
+
+211
+00:10:19,600 --> 00:10:22,480
+So people ask, so Dex, this is specri development,
+所以人们问，Dex，这是特殊开发，
+
+212
+00:10:22,470 --> 00:10:23,600
+right?
+正确的？
+
+213
+00:10:23,600 --> 00:10:28,240
+No, specri development is broken.
+不，Specri 开发已被破坏。
+
+214
+00:10:28,230 --> 00:10:31,200
+Not the idea, but the phrase.
+不是想法，而是短语。
+
+215
+00:10:31,200 --> 00:10:33,680
+Um, it's not well defined.
+嗯，这个定义不太好。
+
+216
+00:10:33,680 --> 00:10:35,279
+This is Brietta from Thought Works.
+我是 Thought Works 的布丽塔。
+
+217
+00:10:35,279 --> 00:10:39,680
+Um, and a lot of people just say spec and they mean a more detailed prompt.
+嗯，很多人只是说规格，他们的意思是更详细的提示。
+
+218
+00:10:39,680 --> 00:10:40,880
+Does anyone remember this picture?
+有人记得这张照片吗？
+
+219
+00:10:40,880 --> 00:10:43,120
+Does anyone know what this is from?
+有谁知道这是什么来的？
+
+220
+00:10:43,120 --> 00:10:44,320
+All right, that's a deep cut.
+好吧，这是一个很深的伤口。
+
+221
+00:10:44,320 --> 00:10:47,839
+Uh, there will never be a year of agents because of semantic diffusion.
+呃，由于语义扩散，永远不会有代理之年。
+
+222
+00:10:47,829 --> 00:10:49,440
+Martin Fowler said this in 2006.
+马丁·福勒 (Martin Fowler) 在 2006 年曾说过这样的话。
+
+223
+00:10:49,440 --> 00:10:58,399
+We come up with a good term with a good definition and then everybody gets excited and everybody starts meaning it to mean a hundred things to a 100 different people and it becomes
+我们想出了一个好的术语和一个好的定义，然后每个人都兴奋起来，每个人都开始将它理解为对 100 个不同的人来说意味着一百件事，然后它就变成了
+
+224
+00:10:58,399 --> 00:10:59,440
+useless.
+无用。
+
+225
+00:10:59,430 --> 00:11:02,560
+We had an agent is a person, an agent is a micros service.
+我们有一个代理是一个人，一个代理是一个微服务。
+
+226
+00:11:02,560 --> 00:11:03,920
+An agent is a chatbot.
+代理是一个聊天机器人。
+
+227
+00:11:03,910 --> 00:11:05,279
+An agent is a workflow.
+代理是一个工作流程。
+
+228
+00:11:05,279 --> 00:11:06,480
+And thank you, Simon.
+谢谢你，西蒙。
+
+229
+00:11:06,480 --> 00:11:07,360
+We're back to the beginning.
+我们又回到了起点。
+
+230
+00:11:07,360 --> 00:11:09,519
+An agent is just tools in a loop.
+代理只是循环中的工具。
+
+231
+00:11:09,519 --> 00:11:11,760
+Um, this is happening to spec driven dev.
+嗯，这种情况发生在规范驱动的开发人员身上。
+
+232
+00:11:11,760 --> 00:11:14,880
+I used to have Sean's uh slide in the beginning of this talk,
+我曾经在演讲开始时放过 Sean 的呃幻灯片，
+
+233
+00:11:14,880 --> 00:11:17,120
+but it caused a bunch of people to focus on the wrong things.
+但这导致很多人把注意力集中在错误的事情上。
+
+234
+00:11:17,120 --> 00:11:18,800
+His thing of like, forget the code.
+他喜欢的事情就是忘记密码。
+
+235
+00:11:18,800 --> 00:11:21,600
+It's like assembly now and you just focus on the markdown.
+现在就像组装一样，您只需专注于降价。
+
+236
+00:11:21,600 --> 00:11:25,120
+Very cool idea, but people say Spectrum Dev is writing a better prompt,
+非常酷的想法，但人们说 Spectrum Dev 正在编写更好的提示，
+
+237
+00:11:25,120 --> 00:11:26,800
+a product requirements document.
+产品需求文件。
+
+238
+00:11:26,790 --> 00:11:30,079
+Sometimes it's using like verifiable feedback loops and back pressure.
+有时它会使用可验证的反馈循环和背压。
+
+239
+00:11:30,079 --> 00:11:33,519
+Maybe it is treating the code like assembly like Sean taught us.
+也许就像 Sean 教给我们的那样，将代码视为汇编。
+
+240
+00:11:33,519 --> 00:11:37,120
+Um, but a lot of people is just using a bunch of markdown files while you're coding.
+嗯，但是很多人在编码时只是使用一堆 Markdown 文件。
+
+241
+00:11:37,120 --> 00:11:39,519
+Or my favorite, I just stumbled upon this last week.
+或者我最喜欢的，我上周才偶然发现的。
+
+242
+00:11:39,519 --> 00:11:43,680
+Uh, a spec is documentation for an open source library.
+呃，规范是开源库的文档。
+
+243
+00:11:43,680 --> 00:11:44,560
+So it's gone.
+所以它消失了。
+
+244
+00:11:44,560 --> 00:11:46,640
+It's as specri dev is overhyped.
+这是因为specri dev被夸大了。
+
+245
+00:11:46,640 --> 00:11:48,079
+It's useless now.
+现在没用了。
+
+246
+00:11:48,079 --> 00:11:50,800
+It's semantically diffused.
+它在语义上是分散的。
+
+247
+00:11:50,790 --> 00:11:54,079
+Um, so I want to talk about like four things that actually work today.
+嗯，所以我想谈谈今天实际有效的四件事。
+
+248
+00:11:54,079 --> 00:11:58,640
+The tactical and practical steps that we found working internally and with a bunch of users.
+我们发现这些战术和实际步骤在内部和一群用户中都有效。
+
+249
+00:11:58,640 --> 00:12:01,360
+Um, we do the research, we figure out how the system works.
+嗯，我们进行研究，弄清楚系统是如何工作的。
+
+250
+00:12:01,360 --> 00:12:03,440
+Um, remember Momento?
+嗯，还记得 Momento 吗？
+
+251
+00:12:03,440 --> 00:12:05,839
+This is the best the best movie on context engineering,
+这是关于上下文工程的最好的电影，
+
+252
+00:12:05,839 --> 00:12:07,440
+as Peter says it.
+正如彼得所说。
+
+253
+00:12:07,440 --> 00:12:09,279
+Guy wakes up, he has no memory.
+盖伊醒来，他失去了记忆。
+
+254
+00:12:09,279 --> 00:12:13,760
+He has to like read his own tattoos to figure out who he is and what he's up to.
+他必须喜欢阅读自己的纹身才能弄清楚他是谁以及他在做什么。
+
+255
+00:12:13,760 --> 00:12:15,200
+If you don't onboard your agents,
+如果你不加入你的代理人，
+
+256
+00:12:15,200 --> 00:12:17,040
+they will make stuff up.
+他们会编造一些东西。
+
+257
+00:12:17,040 --> 00:12:19,680
+And so, if this is your team, this is very simplified for most of you.
+因此，如果这是您的团队，那么这对你们大多数人来说都非常简单。
+
+258
+00:12:19,680 --> 00:12:21,519
+Most of you have much bigger orgs than this.
+你们中的大多数人都有比这大得多的组织。
+
+259
+00:12:21,519 --> 00:12:23,600
+But let's say you want to do some work over here.
+但假设您想在这里做一些工作。
+
+260
+00:12:23,600 --> 00:12:27,200
+Um, one thing you could do is you could put onboarding into every repo.
+嗯，你可以做的一件事就是你可以将入职培训放入每个存储库中。
+
+261
+00:12:27,190 --> 00:12:28,160
+You put a bunch of context.
+你放了一堆上下文。
+
+262
+00:12:28,160 --> 00:12:28,880
+Here's the repo.
+这是回购协议。
+
+263
+00:12:28,880 --> 00:12:29,680
+Here's how it works.
+这是它的工作原理。
+
+264
+00:12:29,680 --> 00:12:36,240
+This is a compression of all the context in the codebase that the agent can see ahead of time before actually getting to work.
+这是代理在实际开始工作之前可以提前看到的代码库中所有上下文的压缩。
+
+265
+00:12:36,230 --> 00:12:39,920
+This is challenging because sometimes it gets too long.
+这是具有挑战性的，因为有时它会变得太长。
+
+266
+00:12:39,920 --> 00:12:41,440
+As your codebase gets really big,
+当你的代码库变得非常大时，
+
+267
+00:12:41,440 --> 00:12:45,519
+you either have to make this longer or you have to leave information out.
+您要么必须延长此时间，要么必须省略信息。
+
+268
+00:12:45,519 --> 00:12:48,800
+And so as you uh are reading through this,
+所以当你呃正在读这篇文章时，
+
+269
+00:12:48,800 --> 00:12:54,720
+you're going to read the context of this big 5 million line monor repo and you're goingto use all the smart zone just to learn how it works.
+您将阅读这个包含 500 万行的大型单一存储库的上下文，并且将使用所有智能区域来了解它是如何工作的。
+
+270
+00:12:54,720 --> 00:12:57,839
+And you're not going to be able to do any good tool calling in the dumb zone.
+而且你将无法在哑区中调用任何好的工具。
+
+271
+00:12:57,839 --> 00:13:02,320
+So that's uh you can you can shard this down the stack.
+所以，呃，你可以将其分解到堆栈中。
+
+272
+00:13:02,320 --> 00:13:04,399
+You can do they're just talking about progressive disclosure.
+他们只是在谈论渐进式披露。
+
+273
+00:13:04,399 --> 00:13:05,680
+You could split this up, right?
+你可以把它分开，对吗？
+
+274
+00:13:05,680 --> 00:13:13,680
+You could just put a file in the root of every repo and then like at every level you have like additional context based on if you're working here,
+您可以将一个文件放在每个存储库的根目录中，然后就像在每个级别上一样，根据您是否在这里工作，您可以添加额外的上下文，
+
+275
+00:13:13,680 --> 00:13:15,120
+this is what you need to know.
+这是你需要知道的。
+
+276
+00:13:15,120 --> 00:13:18,399
+Uh we don't document the files themselves cuz they're the source of truth.
+呃，我们不会记录文件本身，因为它们是事实的来源。
+
+277
+00:13:18,399 --> 00:13:19,760
+But then as your agent is working,
+但当你的代理人工作时，
+
+278
+00:13:19,760 --> 00:13:22,160
+you know, you pull in the root context and then you pull in the subcontext.
+你知道，你拉入根上下文，然后拉入子上下文。
+
+279
+00:13:22,160 --> 00:13:24,639
+We won't talk about any specific like you could use cloudd for this,
+我们不会谈论任何具体的事情，比如你可以使用云来实现这一点，
+
+280
+00:13:24,639 --> 00:13:26,399
+you can use hooks for this, whatever it is.
+无论它是什么，你都可以使用钩子来实现这一点。
+
+281
+00:13:26,399 --> 00:13:30,959
+Um, but then you still have plenty of room in the smart zone because you're only pulling in what you need to know.
+嗯，但是你在智能区域仍然​​有足够的空间，因为你只提取你需要知道的内容。
+
+282
+00:13:30,959 --> 00:13:33,760
+Um, the problem with this is that it gets out of date.
+嗯，问题是它已经过时了。
+
+283
+00:13:33,760 --> 00:13:36,000
+And so every time you ship a new feature,
+因此，每次发布新功能时，
+
+284
+00:13:36,000 --> 00:13:42,000
+you need to kind of like cache and validate and rebuild large parts of this internal documentation.
+您需要缓存、验证和重建此内部文档的大部分内容。
+
+285
+00:13:42,000 --> 00:13:46,320
+And you could use a lot of AI and make it part of your process to update this.
+你可以使用大量人工智能，并将其作为更新过程的一部分。
+
+286
+00:13:46,320 --> 00:13:49,440
+Um, but I want to ask a question between the actual code,
+嗯，但我想问一个实际代码之间的问题，
+
+287
+00:13:49,440 --> 00:13:50,399
+the function names, the comments,
+函数名称、注释、
+
+288
+00:13:50,399 --> 00:13:51,519
+and the documentation.
+和文档。
+
+289
+00:13:51,519 --> 00:13:57,279
+Does anyone want to guess what is on the y-axis of this chart?
+有人想猜猜这张图表的 y 轴上是什么吗？
+
+290
+00:13:57,269 --> 00:13:58,639
+slop >> slop.
+坡度 >> 坡度。
+
+291
+00:13:58,639 --> 00:14:04,240
+It's actually the amount of lies you can find in any one part of your codebase.
+它实际上是您在代码库的任何一部分中可以找到的谎言的数量。
+
+292
+00:14:04,230 --> 00:14:06,480
+Um, so you could make a part of your process to update this,
+嗯，所以你可以在你的流程中做一部分来更新这个，
+
+293
+00:14:06,480 --> 00:14:08,560
+but you probably shouldn't cuz you probably won't.
+但你可能不应该这样做，因为你可能不会这样做。
+
+294
+00:14:08,560 --> 00:14:11,199
+What we prefer is on demand compressed context.
+我们更喜欢的是按需压缩上下文。
+
+295
+00:14:11,199 --> 00:14:15,440
+So if I'm building a feature that relates to SCM providers and Jira and Linear,
+因此，如果我正在构建与 SCM 提供商以及 Jira 和 Linear 相关的功能，
+
+296
+00:14:15,440 --> 00:14:17,040
+um, I would just give it a little bit of steering.
+嗯，我只是给它一点指导。
+
+297
+00:14:17,040 --> 00:14:21,680
+I would say, hey, we're going over in like this like part of the codebase over here.
+我会说，嘿，我们正在查看这边代码库的一部分。
+
+298
+00:14:21,680 --> 00:14:32,240
+Um, and a good research uh prompt or or slash command might take you or skill even uh launch a bunch of sub aents to take these vertical slices through the codebase and then build up
+嗯，一个好的研究提示或斜杠命令可能会引导你或你的技能，甚至启动一系列子代理，穿越代码库的垂直切片，然后构建起来。
+
+299
+00:14:32,240 --> 00:14:39,199
+a research document that is just a snapshot of the actually true based on the code itself parts of the codebase that matter.
+一个基于代码本身关键部分的真实快照式的研究文档。
+
+300
+00:14:39,199 --> 00:14:41,839
+We are compressing truth.
+我们正在压缩真相。
+
+301
+00:14:41,839 --> 00:14:43,600
+Um, planning is leverage.
+规划是杠杆作用。
+
+302
+00:14:43,600 --> 00:14:45,839
+Planning is about compression of intent.
+规划是关于对意图的压缩。
+
+303
+00:14:45,839 --> 00:14:48,720
+Um, and in plan we're going to outline the exact steps.
+嗯，而且在计划中我们会概述具体的步骤。
+
+304
+00:14:48,720 --> 00:14:54,160
+We take our research and our PRD or our bug ticket or our whatever it is and we create a plan and we create a plan file.
+我们进行研究、PRD 或 bug 通知单或其他任何内容，然后创建一个计划并创建一个计划文件。
+
+305
+00:14:54,160 --> 00:14:55,600
+So we're compacting again.
+所以我们再次压缩。
+
+306
+00:14:55,600 --> 00:14:57,680
+And I want to pause to talk about mental alignment.
+我想停下来谈谈心理调整。
+
+307
+00:14:57,680 --> 00:15:03,920
+Um does anyone know what code review is for?
+嗯，有人知道代码审查的目的是什么吗？
+
+308
+00:15:03,910 --> 00:15:04,880
+>> Mental alignment.
+>> 心理调整。
+
+309
+00:15:04,880 --> 00:15:12,240
+Mental alignment is it is about finding making sure things are correct and stuff but the most important thing is how do we keep everybody on the team on the same page about how the
+心理协调是指确保事情是正确的，但最重要的是我们如何让团队中的每个人都了解如何
+
+310
+00:15:12,230 --> 00:15:14,079
+codebase is changing and why.
+代码库正在发生变化以及原因。
+
+311
+00:15:14,079 --> 00:15:16,720
+And I can read a thousand lines of Golang every week.
+我每周可以阅读一千行 Golang。
+
+312
+00:15:16,720 --> 00:15:18,160
+Uh sorry I can't read a thousand.
+呃，抱歉我看不懂一千。
+
+313
+00:15:18,150 --> 00:15:18,639
+It's hard.
+这很难。
+
+314
+00:15:18,639 --> 00:15:19,199
+I can do it.
+我能做到。
+
+315
+00:15:19,199 --> 00:15:20,240
+I don't want to.
+我不想。
+
+316
+00:15:20,230 --> 00:15:23,120
+Um, and as our team grows, I all the code gets reviewed.
+嗯，随着我们团队的成长，我所有的代码都会得到审查。
+
+317
+00:15:23,120 --> 00:15:25,120
+We don't not read the code, but I,
+我们不是不读代码，但是我，
+
+318
+00:15:25,120 --> 00:15:27,519
+as you know, a technical leader in the in on the team,
+如您所知，团队中的技术领导者，
+
+319
+00:15:27,509 --> 00:15:30,880
+I can read the plans and I can keep up to date and I can that's enough.
+我可以阅读计划并了解最新情况，这就足够了。
+
+320
+00:15:30,880 --> 00:15:35,040
+I can catch some problems early and I maintain understanding of how the system is evolving.
+我可以及早发现一些问题，并保持对系统如何演变的理解。
+
+321
+00:15:35,040 --> 00:15:41,199
+Um, Mitchell had this really good post about how he's been putting his AMP threads on his pull requests so that you can see not just,
+嗯，Mitchell 有一篇非常好的文章，介绍了他如何将 AMP 线程放在他的 Pull 请求上，以便您不仅可以看到，
+
+322
+00:15:41,199 --> 00:15:42,959
+hey, here's a wall of green text in GitHub,
+嘿，这是 GitHub 中的一堵绿色文本墙，
+
+323
+00:15:42,959 --> 00:15:44,639
+but here's the exact steps, here's the prompts,
+但这是确切的步骤，这是提示，
+
+324
+00:15:44,639 --> 00:15:46,880
+and hey, I ran the build at the end and it passed.
+嘿，我最后运行了构建，它通过了。
+
+325
+00:15:46,880 --> 00:15:51,360
+This takes the reviewer on a journey in a way that a GitHub PR just can't.
+这让审阅者踏上了 GitHub PR 无法做到的旅程。
+
+326
+00:15:51,360 --> 00:15:54,560
+And as you're shipping more and more in two to three times as much code,
+随着您用两到三倍的代码交付越来越多的代码，
+
+327
+00:15:54,550 --> 00:16:02,000
+it's really on you to find ways to keep your team on the same page and show them here's the steps I did and here's how we tested it manually.
+您确实需要找到让您的团队保持一致并向他们展示的方法，这是我所做的步骤，这是我们手动测试的方法。
+
+328
+00:16:02,000 --> 00:16:03,600
+Um, your goal is leverage.
+嗯，你的目标是杠杆。
+
+329
+00:16:03,600 --> 00:16:06,639
+So you want high confidence that the model will actually do the right thing.
+因此，您需要高度确信该模型实际上会做正确的事情。
+
+330
+00:16:06,639 --> 00:16:11,040
+I can't read this plan and know what actually is going to happen and what code changes are going to happen.
+我无法阅读该计划，也无法知道实际会发生什么以及将发生什么代码更改。
+
+331
+00:16:11,040 --> 00:16:17,279
+So we've over time iterated towards our plans include actual code snippets of what's going to change.
+因此，随着时间的推移，我们不断迭代我们的计划，包括将要更改的内容的实际代码片段。
+
+332
+00:16:17,279 --> 00:16:18,160
+So your goal is leverage.
+所以你的目标是杠杆。
+
+333
+00:16:18,160 --> 00:16:21,600
+You want compression of intent and you want reliable execution.
+您想要压缩意图并且想要可靠的执行。
+
+334
+00:16:21,600 --> 00:16:23,680
+Um and so I don't know I have a physics background.
+嗯，所以我不知道我有物理背景。
+
+335
+00:16:23,680 --> 00:16:27,279
+We like to draw lines through the center of peaks and curves.
+我们喜欢通过峰和曲线的中心画线。
+
+336
+00:16:27,279 --> 00:16:30,240
+Uh as your plans get longer, reliability goes up,
+呃，随着你的计划变得越来越长，可靠性就会提高，
+
+337
+00:16:30,240 --> 00:16:31,440
+readability goes down.
+可读性下降。
+
+338
+00:16:31,440 --> 00:16:33,920
+There's a sweet spot for you and your team and your codebase.
+对于您和您的团队以及您的代码库来说，这是一个最佳位置。
+
+339
+00:16:33,920 --> 00:16:37,759
+you should try to find it because when we review the research and the plans,
+你应该尝试找到它，因为当我们审查研究和计划时，
+
+340
+00:16:37,759 --> 00:16:40,480
+if they're good, then we can get mental alignment.
+如果他们很好，那么我们就可以在心理上保持一致。
+
+341
+00:16:40,480 --> 00:16:42,240
+Um, don't outsource the thinking.
+嗯，不要外包思维。
+
+342
+00:16:42,240 --> 00:16:44,959
+I've said this before, this is not magic.
+我以前说过，这不是魔法。
+
+343
+00:16:44,959 --> 00:16:46,720
+There is no perfect prompt.
+没有完美的提示。
+
+344
+00:16:46,710 --> 00:16:50,560
+You still will not work if you do not read the plan.
+如果你不阅读该计划，你仍然无法工作。
+
+345
+00:16:50,560 --> 00:16:53,040
+So, we built our entire process around you,
+因此，我们围绕您构建了整个流程，
+
+346
+00:16:53,040 --> 00:16:56,800
+the builder, are in back and forth with the agent reading the plans as they're created.
+建筑商在制定计划时与代理人来回阅读计划。
+
+347
+00:16:56,800 --> 00:16:58,000
+And then if you need peer review,
+然后如果你需要同行评审，
+
+348
+00:16:58,000 --> 00:16:58,959
+you can send it to someone and say,
+你可以把它发给某人并说，
+
+349
+00:16:58,959 --> 00:17:00,079
+"Hey, does this plan look right?
+“嘿嘿，这个计划看起来不错吧？
+
+350
+00:17:00,079 --> 00:17:00,880
+Is this the right approach?
+这是正确的方法吗？
+
+351
+00:17:00,870 --> 00:17:09,360
+Is this the right order to look at these things?" Um Jake again wrote a really good blog post about like the thing that makes research plan implementing valuable is you the human in
+这是看待这些事情的正确顺序吗？”嗯杰克再次写了一篇非常好的博客文章，内容是让研究计划实施变得有价值的是你这个人
+
+352
+00:17:09,360 --> 00:17:11,600
+the loop making sure it's correct.
+循环确保它是正确的。
+
+353
+00:17:11,600 --> 00:17:22,959
+So if you take one thing away from this talk it should be that a bad line of code is a bad line of code and a bad part of a plan is could be a hundred bad lines of code and a bad line
+因此，如果您从本次演讲中剔除一件事，那就应该是，一行糟糕的代码就是一行糟糕的代码，而计划的糟糕部分可能是一百行糟糕的代码和一行糟糕的代码
+
+354
+00:17:22,959 --> 00:17:29,120
+of research like a misunderstanding of how the system works and where things are your whole thing is going to be hosed.
+诸如对系统如何工作以及事物在哪里的误解之类的研究将被彻底解决。
+
+355
+00:17:29,120 --> 00:17:31,679
+You're going to be telling sending the model off in the wrong direction.
+你会告诉你将模型发送到错误的方向。
+
+356
+00:17:31,679 --> 00:17:34,080
+And so when we're working internally and with users,
+因此，当我们在内部和与用户合作时，
+
+357
+00:17:34,080 --> 00:17:39,919
+we're constantly trying to move human effort and focus to the highest leverage parts of this pipeline.
+我们不断尝试将人力转移到这条管道中杠杆率最高的部分。
+
+358
+00:17:39,919 --> 00:17:41,760
+Um, don't outsource the thinking.
+嗯，不要外包思维。
+
+359
+00:17:41,760 --> 00:17:45,679
+Watch out for tools that just spew out a bunch of markdown files just to make you feel good.
+小心那些只是为了让你感觉良好而输出一堆 Markdown 文件的工具。
+
+360
+00:17:45,679 --> 00:17:47,200
+I'm not going to name names here.
+我不会在这里指名道姓。
+
+361
+00:17:47,200 --> 00:17:49,200
+Uh, sometimes this is overkill.
+呃，有时候这太过分了。
+
+362
+00:17:49,200 --> 00:17:51,440
+And the way I like to think about this is like,
+我喜欢思考这个问题的方式是，
+
+363
+00:17:51,440 --> 00:17:54,320
+yeah, you don't always need a full research plan implement.
+是的，你并不总是需要实施完整的研究计划。
+
+364
+00:17:54,320 --> 00:17:56,160
+Sometimes you need more, sometimes you need less.
+有时您需要更多，有时您需要更少。
+
+365
+00:17:56,160 --> 00:17:57,760
+If you're changing the color of a button,
+如果您要更改按钮的颜色，
+
+366
+00:17:57,760 --> 00:18:00,080
+just talk to the agent and tell it what to do.
+只需与代理交谈并告诉它该怎么做。
+
+367
+00:18:00,080 --> 00:18:04,640
+Um, if you're doing like a simple plan and as a small feature,
+嗯，如果你正在做一个简单的计划和一个小功能，
+
+368
+00:18:04,640 --> 00:18:07,039
+if you're doing medium features across multiple repos,
+如果您正在跨多个存储库执行中等功能，
+
+369
+00:18:07,039 --> 00:18:09,039
+then do one research, then build a plan.
+然后做一项研究，然后制定一个计划。
+
+370
+00:18:09,039 --> 00:18:10,799
+Basically, the hardest problem you can solve,
+基本上，你能解决的最难的问题，
+
+371
+00:18:10,799 --> 00:18:15,840
+the ceiling goes up the more of this context engineering compaction you're willing to do.
+您愿意做的工程压实工作越多，天花板就会越高。
+
+372
+00:18:15,840 --> 00:18:18,240
+Um, and so if you're in the top right corner,
+嗯，如果你在右上角，
+
+373
+00:18:18,230 --> 00:18:20,000
+you're probably going to have to do more.
+你可能需要做更多的事情。
+
+374
+00:18:20,000 --> 00:18:24,480
+A lot of people ask me, "How do I know how much context engineering to use?" It takes reps.
+很多人问我：“我怎么知道要使用多少上下文工程？”这需要代表。
+
+375
+00:18:24,480 --> 00:18:25,280
+You will get it wrong.
+你会弄错的。
+
+376
+00:18:25,280 --> 00:18:27,280
+You have to get it wrong over and over and over again.
+你必须一遍又一遍地犯错。
+
+377
+00:18:27,280 --> 00:18:28,400
+Sometimes you'll go too big.
+有时你会做得太大。
+
+378
+00:18:28,400 --> 00:18:29,840
+Sometimes you go too small.
+有时你太小了。
+
+379
+00:18:29,830 --> 00:18:32,080
+Pick one tool and get some reps.
+选择一种工具并进行一些重复。
+
+380
+00:18:32,080 --> 00:18:36,480
+I recommend against minmaxing across cloud and codeex and all these different tools.
+我建议不要跨云和 Codeex 以及所有这些不同的工具进行最小化。
+
+381
+00:18:36,480 --> 00:18:39,679
+Um, so I'm not a big acronym guy.
+嗯，所以我不是一个大缩写人。
+
+382
+00:18:39,669 --> 00:18:42,240
+Uh, we said specri dev was broken.
+呃，我们说 Specri dev 坏了。
+
+383
+00:18:42,240 --> 00:18:44,799
+Uh, research plan and implement I don't think will be the steps.
+呃，研究计划和实施我认为不会是步骤。
+
+384
+00:18:44,799 --> 00:18:48,640
+The important part is compaction and context engineering and staying in the smart zone.
+重要的部分是压缩和环境工程以及留在智能区域。
+
+385
+00:18:48,640 --> 00:18:52,880
+But people are calling this RPI and there's nothing I can do about it.
+但人们称之为 RPI，而我对此无能为力。
+
+386
+00:18:52,870 --> 00:18:54,160
+So, uh, just be wary.
+所以，呃，要小心一点。
+
+387
+00:18:54,160 --> 00:18:55,120
+There is no perfect prompt.
+没有完美的提示。
+
+388
+00:18:55,120 --> 00:18:56,559
+There is no silver bullet.
+没有灵丹妙药。
+
+389
+00:18:56,559 --> 00:18:58,559
+Um, if you really want a hypy word,
+嗯，如果你真的想要一个炒作的话，
+
+390
+00:18:58,559 --> 00:19:00,400
+you can call this harness harness engineering,
+你可以将这种线束称为线束工程，
+
+391
+00:19:00,400 --> 00:19:01,840
+which is part of context engineering,
+这是上下文工程的一部分，
+
+392
+00:19:01,840 --> 00:19:04,640
+and it's how you integrate with the integration points on codeex,
+这就是与 Codeex 上的集成点集成的方式，
+
+393
+00:19:04,630 --> 00:19:05,679
+claude, cursor, whatever.
+克劳德，光标，等等。
+
+394
+00:19:05,679 --> 00:19:08,000
+How you customize your codebase.
+如何自定义代码库。
+
+395
+00:19:08,000 --> 00:19:11,120
+Um, so what's next?
+嗯，那么接下来呢？
+
+396
+00:19:11,120 --> 00:19:13,679
+I think the coding agent stuff is actually going to be commoditized.
+我认为编码代理的东西实际上将会商品化。
+
+397
+00:19:13,669 --> 00:19:15,600
+People are going to learn how to do this and get better at it.
+人们将学习如何做到这一点并做得更好。
+
+398
+00:19:15,600 --> 00:19:24,400
+And the hard part is going to be how do you adapt your team and your workflow and the SDLC to work in a world where 99% of your code is shipped by AI.
+困难的部分是如何调整您的团队、工作流程和 SDLC，以适应 99% 的代码由 AI 交付的世界。
+
+399
+00:19:24,400 --> 00:19:25,679
+Uh, and if you can't figure this out,
+呃，如果你不明白这一点，
+
+400
+00:19:25,679 --> 00:19:31,360
+you're hosed because there's kind of a rift growing where like staff engineers don't adopt AI because it doesn't make them that much faster.
+你会感到沮丧，因为存在一种裂痕，像工程师那样不采用人工智能，因为它不会让他们变得更快。
+
+401
+00:19:31,360 --> 00:19:36,720
+And then junior mid-levels engineers use a lot because it fills in skill gaps and then it also produces some slop.
+然后初级中级工程师会使用很多，因为它填补了技能空白，然后它也产生了一些废品。
+
+402
+00:19:36,720 --> 00:19:42,480
+And then the senior engineers hate it more and more every week because they're cleaning up slop that was shipped by cursor the week before.
+然后高级工程师每周都越来越讨厌它，因为他们正在清理前一周由光标运送的污水。
+
+403
+00:19:42,480 --> 00:19:44,160
+Uh, this is not AI's fault.
+呃，这不是AI的错。
+
+404
+00:19:44,160 --> 00:19:46,000
+This is not the mid-level engineers fault.
+这不是中级工程师的错。
+
+405
+00:19:46,000 --> 00:19:50,240
+Like if cultural change is really hard and it needs to come from the top if it's going to work.
+就像文化变革真的很难，而且需要来自高层才能发挥作用。
+
+406
+00:19:50,240 --> 00:19:52,240
+So if you're a technical leader at your company,
+所以如果你是公司的技术领导者
+
+407
+00:19:52,240 --> 00:19:54,799
+pick one tool and get some reps.
+选择一种工具并进行一些重复。
+
+408
+00:19:54,799 --> 00:19:56,559
+If you want to help, we are hiring.
+如果您想提供帮助，我们正在招聘。
+
+409
+00:19:56,559 --> 00:20:03,520
+We're building an Aentic IDE to help teams of all sizes speedrun the journey to 99% AI generated code.
+我们正在构建一个 Aentic IDE，以帮助各种规模的团队加速实现 99% 的 AI 生成代码。
+
+410
+00:20:03,520 --> 00:20:06,080
+Uh if we'd love to we'd love to talk if you want to work with us.
+呃，如果我们愿意的话，如果您想与我们合作，我们很乐意谈谈。
+
+411
+00:20:06,080 --> 00:20:08,320
+Uh go go hit our website, send us an email,
+呃，去访问我们的网站，给我们发送电子邮件，
+
+412
+00:20:08,320 --> 00:20:09,679
+come find me in the hallway.
+来走廊里找我吧。
+
+413
+00:20:14,373 --> 00:20:30,104
+[music] Heat.
+[音乐]热。
+
+414
+00:20:30,094 --> 00:20:32,124
+[music]
+[音乐]
+
+415
+00:20:09,679 --> 00:20:14,383
+Uh thank you all so much for your energy.
+嗯，非常感谢大家的能量。

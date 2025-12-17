@@ -1,0 +1,3815 @@
+1
+00:00:00,000 --> 00:00:01,829
+
+Hey, this is Lance from Mangane. I want
+
+2
+00:00:01,829 --> 00:00:01,839
+Hey, this is Lance from Mangane. I want
+ 
+
+3
+00:00:01,839 --> 00:00:03,590
+Hey, this is Lance from Mangane. I want
+to talk about skills, a new concept
+
+4
+00:00:03,590 --> 00:00:03,600
+to talk about skills, a new concept
+ 
+
+5
+00:00:03,600 --> 00:00:06,070
+to talk about skills, a new concept
+introduced by Anthropic recently. Show
+
+6
+00:00:06,070 --> 00:00:06,080
+introduced by Anthropic recently. Show
+ 
+
+7
+00:00:06,080 --> 00:00:08,710
+introduced by Anthropic recently. Show
+how I implemented them in our deep agent
+
+8
+00:00:08,710 --> 00:00:08,720
+how I implemented them in our deep agent
+ 
+
+9
+00:00:08,720 --> 00:00:11,110
+how I implemented them in our deep agent
+CLI and then talk about the philosophy
+
+10
+00:00:11,110 --> 00:00:11,120
+CLI and then talk about the philosophy
+ 
+
+11
+00:00:11,120 --> 00:00:12,310
+CLI and then talk about the philosophy
+behind skills and why they're
+
+12
+00:00:12,310 --> 00:00:12,320
+behind skills and why they're
+ 
+
+13
+00:00:12,320 --> 00:00:14,230
+behind skills and why they're
+interesting. Now, this is a deep agency.
+
+14
+00:00:14,230 --> 00:00:14,240
+interesting. Now, this is a deep agency.
+ 
+
+15
+00:00:14,240 --> 00:00:16,230
+interesting. Now, this is a deep agency.
+I've just spun this up in my terminal.
+
+16
+00:00:16,230 --> 00:00:16,240
+I've just spun this up in my terminal.
+ 
+
+17
+00:00:16,240 --> 00:00:17,910
+I've just spun this up in my terminal.
+I'm going to ask the deep agent CLI to
+
+18
+00:00:17,910 --> 00:00:17,920
+I'm going to ask the deep agent CLI to
+ 
+
+19
+00:00:17,920 --> 00:00:19,990
+I'm going to ask the deep agent CLI to
+perform web research on a topic. I'm
+
+20
+00:00:19,990 --> 00:00:20,000
+perform web research on a topic. I'm
+ 
+
+21
+00:00:20,000 --> 00:00:22,230
+perform web research on a topic. I'm
+interested context engineering. It kicks
+
+22
+00:00:22,230 --> 00:00:22,240
+interested context engineering. It kicks
+ 
+
+23
+00:00:22,240 --> 00:00:23,189
+interested context engineering. It kicks
+off. Now, you'll see something
+
+24
+00:00:23,189 --> 00:00:23,199
+off. Now, you'll see something
+ 
+
+25
+00:00:23,199 --> 00:00:25,189
+off. Now, you'll see something
+interesting here. Based on my request,
+
+26
+00:00:25,189 --> 00:00:25,199
+interesting here. Based on my request,
+ 
+
+27
+00:00:25,199 --> 00:00:27,109
+interesting here. Based on my request,
+it scanned its skills directory, which
+
+28
+00:00:27,109 --> 00:00:27,119
+it scanned its skills directory, which
+ 
+
+29
+00:00:27,119 --> 00:00:29,029
+it scanned its skills directory, which
+I'll talk about in a minute, and it's
+
+30
+00:00:29,029 --> 00:00:29,039
+I'll talk about in a minute, and it's
+ 
+
+31
+00:00:29,039 --> 00:00:31,269
+I'll talk about in a minute, and it's
+found a skill related to this topic of
+
+32
+00:00:31,269 --> 00:00:31,279
+found a skill related to this topic of
+ 
+
+33
+00:00:31,279 --> 00:00:33,190
+found a skill related to this topic of
+web research, which I gave it. So, it
+
+34
+00:00:33,190 --> 00:00:33,200
+web research, which I gave it. So, it
+ 
+
+35
+00:00:33,200 --> 00:00:36,150
+web research, which I gave it. So, it
+actually went ahead and read this
+
+36
+00:00:36,150 --> 00:00:36,160
+actually went ahead and read this
+ 
+
+37
+00:00:36,160 --> 00:00:38,310
+actually went ahead and read this
+skill.md file, which gives a bunch of
+
+38
+00:00:38,310 --> 00:00:38,320
+skill.md file, which gives a bunch of
+ 
+
+39
+00:00:38,320 --> 00:00:39,670
+skill.md file, which gives a bunch of
+context about how to perform web
+
+40
+00:00:39,670 --> 00:00:39,680
+context about how to perform web
+ 
+
+41
+00:00:39,680 --> 00:00:41,830
+context about how to perform web
+research. So, you can think about skills
+
+42
+00:00:41,830 --> 00:00:41,840
+research. So, you can think about skills
+ 
+
+43
+00:00:41,840 --> 00:00:43,510
+research. So, you can think about skills
+as like standard operating procedures
+
+44
+00:00:43,510 --> 00:00:43,520
+as like standard operating procedures
+ 
+
+45
+00:00:43,520 --> 00:00:45,510
+as like standard operating procedures
+that you can give an agent for different
+
+46
+00:00:45,510 --> 00:00:45,520
+that you can give an agent for different
+ 
+
+47
+00:00:45,520 --> 00:00:47,910
+that you can give an agent for different
+tasks. So, in this case, I've given the
+
+48
+00:00:47,910 --> 00:00:47,920
+tasks. So, in this case, I've given the
+ 
+
+49
+00:00:47,920 --> 00:00:49,830
+tasks. So, in this case, I've given the
+deep agent CLI a number of different
+
+50
+00:00:49,830 --> 00:00:49,840
+deep agent CLI a number of different
+ 
+
+51
+00:00:49,840 --> 00:00:52,389
+deep agent CLI a number of different
+skills, one of them for web research. So
+
+52
+00:00:52,389 --> 00:00:52,399
+skills, one of them for web research. So
+ 
+
+53
+00:00:52,399 --> 00:00:54,549
+skills, one of them for web research. So
+what happens is when I ask this request
+
+54
+00:00:54,549 --> 00:00:54,559
+what happens is when I ask this request
+ 
+
+55
+00:00:54,559 --> 00:00:57,110
+what happens is when I ask this request
+for research, it knows, hey, I have a
+
+56
+00:00:57,110 --> 00:00:57,120
+for research, it knows, hey, I have a
+ 
+
+57
+00:00:57,120 --> 00:01:00,630
+for research, it knows, hey, I have a
+skill for that and it looks at a
+
+58
+00:01:00,630 --> 00:01:00,640
+skill for that and it looks at a
+ 
+
+59
+00:01:00,640 --> 00:01:03,990
+skill for that and it looks at a
+particular file called skillmd in the
+
+60
+00:01:03,990 --> 00:01:04,000
+particular file called skillmd in the
+ 
+
+61
+00:01:04,000 --> 00:01:07,350
+particular file called skillmd in the
+skills directory. It reads that file and
+
+62
+00:01:07,350 --> 00:01:07,360
+skills directory. It reads that file and
+ 
+
+63
+00:01:07,360 --> 00:01:08,950
+skills directory. It reads that file and
+then it gathers a bunch of context about
+
+64
+00:01:08,950 --> 00:01:08,960
+then it gathers a bunch of context about
+ 
+
+65
+00:01:08,960 --> 00:01:10,630
+then it gathers a bunch of context about
+this particular task that I wanted to
+
+66
+00:01:10,630 --> 00:01:10,640
+this particular task that I wanted to
+ 
+
+67
+00:01:10,640 --> 00:01:13,109
+this particular task that I wanted to
+solve. The agent mentions it's going to
+
+68
+00:01:13,109 --> 00:01:13,119
+solve. The agent mentions it's going to
+ 
+
+69
+00:01:13,119 --> 00:01:15,429
+solve. The agent mentions it's going to
+follow the web research workflow. Then
+
+70
+00:01:15,429 --> 00:01:15,439
+follow the web research workflow. Then
+ 
+
+71
+00:01:15,439 --> 00:01:17,990
+follow the web research workflow. Then
+based upon the skill, it says, "Okay,
+
+72
+00:01:17,990 --> 00:01:18,000
+based upon the skill, it says, "Okay,
+ 
+
+73
+00:01:18,000 --> 00:01:19,749
+based upon the skill, it says, "Okay,
+I'll follow that research workflow that
+
+74
+00:01:19,749 --> 00:01:19,759
+I'll follow that research workflow that
+ 
+
+75
+00:01:19,759 --> 00:01:21,429
+I'll follow that research workflow that
+you've given me." creates a task list,
+
+76
+00:01:21,429 --> 00:01:21,439
+you've given me." creates a task list,
+ 
+
+77
+00:01:21,439 --> 00:01:23,429
+you've given me." creates a task list,
+writes a request,
+
+78
+00:01:23,429 --> 00:01:23,439
+writes a request,
+ 
+
+79
+00:01:23,439 --> 00:01:24,950
+writes a request,
+and it proceeds down this research
+
+80
+00:01:24,950 --> 00:01:24,960
+and it proceeds down this research
+ 
+
+81
+00:01:24,960 --> 00:01:27,670
+and it proceeds down this research
+trajectory based upon the contents of
+
+82
+00:01:27,670 --> 00:01:27,680
+trajectory based upon the contents of
+ 
+
+83
+00:01:27,680 --> 00:01:29,350
+trajectory based upon the contents of
+that skilled.md file, which it
+
+84
+00:01:29,350 --> 00:01:29,360
+that skilled.md file, which it
+ 
+
+85
+00:01:29,360 --> 00:01:31,350
+that skilled.md file, which it
+dynamically loaded based upon my
+
+86
+00:01:31,350 --> 00:01:31,360
+dynamically loaded based upon my
+ 
+
+87
+00:01:31,360 --> 00:01:33,109
+dynamically loaded based upon my
+request. So now what's happening is it's
+
+88
+00:01:33,109 --> 00:01:33,119
+request. So now what's happening is it's
+ 
+
+89
+00:01:33,119 --> 00:01:34,630
+request. So now what's happening is it's
+going to kick off a sub agent per my
+
+90
+00:01:34,630 --> 00:01:34,640
+going to kick off a sub agent per my
+ 
+
+91
+00:01:34,640 --> 00:01:36,870
+going to kick off a sub agent per my
+instructions to do research. We can see
+
+92
+00:01:36,870 --> 00:01:36,880
+instructions to do research. We can see
+ 
+
+93
+00:01:36,880 --> 00:01:38,550
+instructions to do research. We can see
+that sub agent kicks off a bunch of web
+
+94
+00:01:38,550 --> 00:01:38,560
+that sub agent kicks off a bunch of web
+ 
+
+95
+00:01:38,560 --> 00:01:40,149
+that sub agent kicks off a bunch of web
+searches. That's fine. I approve them
+
+96
+00:01:40,149 --> 00:01:40,159
+searches. That's fine. I approve them
+ 
+
+97
+00:01:40,159 --> 00:01:43,190
+searches. That's fine. I approve them
+all. And you can run the deep agent CLI
+
+98
+00:01:43,190 --> 00:01:43,200
+all. And you can run the deep agent CLI
+ 
+
+99
+00:01:43,200 --> 00:01:44,789
+all. And you can run the deep agent CLI
+in auto approve mode if you don't want
+
+100
+00:01:44,789 --> 00:01:44,799
+in auto approve mode if you don't want
+ 
+
+101
+00:01:44,799 --> 00:01:46,710
+in auto approve mode if you don't want
+these human in the loop approval steps.
+
+102
+00:01:46,710 --> 00:01:46,720
+these human in the loop approval steps.
+ 
+
+103
+00:01:46,720 --> 00:01:48,149
+these human in the loop approval steps.
+stage has conducted a bunch of research
+
+104
+00:01:48,149 --> 00:01:48,159
+stage has conducted a bunch of research
+ 
+
+105
+00:01:48,159 --> 00:01:51,190
+stage has conducted a bunch of research
+and you can see it returns to me a nice
+
+106
+00:01:51,190 --> 00:01:51,200
+and you can see it returns to me a nice
+ 
+
+107
+00:01:51,200 --> 00:01:53,350
+and you can see it returns to me a nice
+overview here. It's then checking its
+
+108
+00:01:53,350 --> 00:01:53,360
+overview here. It's then checking its
+ 
+
+109
+00:01:53,360 --> 00:01:55,109
+overview here. It's then checking its
+to-do. Now it asked me for approval to
+
+110
+00:01:55,109 --> 00:01:55,119
+to-do. Now it asked me for approval to
+ 
+
+111
+00:01:55,119 --> 00:01:57,190
+to-do. Now it asked me for approval to
+write the final report. That's great. So
+
+112
+00:01:57,190 --> 00:01:57,200
+write the final report. That's great. So
+ 
+
+113
+00:01:57,200 --> 00:01:59,270
+write the final report. That's great. So
+I approve that. It's writing this file.
+
+114
+00:01:59,270 --> 00:01:59,280
+I approve that. It's writing this file.
+ 
+
+115
+00:01:59,280 --> 00:02:01,190
+I approve that. It's writing this file.
+It's verifying completeness relative to
+
+116
+00:02:01,190 --> 00:02:01,200
+It's verifying completeness relative to
+ 
+
+117
+00:02:01,200 --> 00:02:03,109
+It's verifying completeness relative to
+the request. So it reads this research
+
+118
+00:02:03,109 --> 00:02:03,119
+the request. So it reads this research
+ 
+
+119
+00:02:03,119 --> 00:02:06,230
+the request. So it reads this research
+request.md which it wrote initially.
+
+120
+00:02:06,230 --> 00:02:06,240
+request.md which it wrote initially.
+ 
+
+121
+00:02:06,240 --> 00:02:08,949
+request.md which it wrote initially.
+Verifies completeness and it finishes
+
+122
+00:02:08,949 --> 00:02:08,959
+Verifies completeness and it finishes
+ 
+
+123
+00:02:08,959 --> 00:02:11,270
+Verifies completeness and it finishes
+the final report has been written to
+
+124
+00:02:11,270 --> 00:02:11,280
+the final report has been written to
+ 
+
+125
+00:02:11,280 --> 00:02:13,270
+the final report has been written to
+this directory. I can enter bash mode
+
+126
+00:02:13,270 --> 00:02:13,280
+this directory. I can enter bash mode
+ 
+
+127
+00:02:13,280 --> 00:02:14,869
+this directory. I can enter bash mode
+with the exclamation point. And I can
+
+128
+00:02:14,869 --> 00:02:14,879
+with the exclamation point. And I can
+ 
+
+129
+00:02:14,879 --> 00:02:16,949
+with the exclamation point. And I can
+see the final report isn't written to my
+
+130
+00:02:16,949 --> 00:02:16,959
+see the final report isn't written to my
+ 
+
+131
+00:02:16,959 --> 00:02:18,309
+see the final report isn't written to my
+directory along with the research
+
+132
+00:02:18,309 --> 00:02:18,319
+directory along with the research
+ 
+
+133
+00:02:18,319 --> 00:02:20,710
+directory along with the research
+request. That's all great. And here's a
+
+134
+00:02:20,710 --> 00:02:20,720
+request. That's all great. And here's a
+ 
+
+135
+00:02:20,720 --> 00:02:22,630
+request. That's all great. And here's a
+file. I can open it up. I can scan it.
+
+136
+00:02:22,630 --> 00:02:22,640
+file. I can open it up. I can scan it.
+ 
+
+137
+00:02:22,640 --> 00:02:25,830
+file. I can open it up. I can scan it.
+So I get a very nicely researched rich
+
+138
+00:02:25,830 --> 00:02:25,840
+So I get a very nicely researched rich
+ 
+
+139
+00:02:25,840 --> 00:02:27,750
+So I get a very nicely researched rich
+report with 17 citations on context
+
+140
+00:02:27,750 --> 00:02:27,760
+report with 17 citations on context
+ 
+
+141
+00:02:27,760 --> 00:02:29,990
+report with 17 citations on context
+engineering. So you've seen skills in
+
+142
+00:02:29,990 --> 00:02:30,000
+engineering. So you've seen skills in
+ 
+
+143
+00:02:30,000 --> 00:02:31,830
+engineering. So you've seen skills in
+action with our deep agent CLI. I want
+
+144
+00:02:31,830 --> 00:02:31,840
+action with our deep agent CLI. I want
+ 
+
+145
+00:02:31,840 --> 00:02:32,710
+action with our deep agent CLI. I want
+to talk a little bit about the
+
+146
+00:02:32,710 --> 00:02:32,720
+to talk a little bit about the
+ 
+
+147
+00:02:32,720 --> 00:02:34,070
+to talk a little bit about the
+philosophy behind skills and why I think
+
+148
+00:02:34,070 --> 00:02:34,080
+philosophy behind skills and why I think
+ 
+
+149
+00:02:34,080 --> 00:02:36,390
+philosophy behind skills and why I think
+it's very interesting. So skills were
+
+150
+00:02:36,390 --> 00:02:36,400
+it's very interesting. So skills were
+ 
+
+151
+00:02:36,400 --> 00:02:38,150
+it's very interesting. So skills were
+introduced by Enthropic recently. You
+
+152
+00:02:38,150 --> 00:02:38,160
+introduced by Enthropic recently. You
+ 
+
+153
+00:02:38,160 --> 00:02:39,750
+introduced by Enthropic recently. You
+can see the very nice blog post on here.
+
+154
+00:02:39,750 --> 00:02:39,760
+can see the very nice blog post on here.
+ 
+
+155
+00:02:39,760 --> 00:02:41,270
+can see the very nice blog post on here.
+Skills are nothing more than directory
+
+156
+00:02:41,270 --> 00:02:41,280
+Skills are nothing more than directory
+ 
+
+157
+00:02:41,280 --> 00:02:44,229
+Skills are nothing more than directory
+of folders. Okay, each folder has a
+
+158
+00:02:44,229 --> 00:02:44,239
+of folders. Okay, each folder has a
+ 
+
+159
+00:02:44,239 --> 00:02:46,710
+of folders. Okay, each folder has a
+particular skillmd file and the skillmd
+
+160
+00:02:46,710 --> 00:02:46,720
+particular skillmd file and the skillmd
+ 
+
+161
+00:02:46,720 --> 00:02:48,390
+particular skillmd file and the skillmd
+file has a particular structure. It has
+
+162
+00:02:48,390 --> 00:02:48,400
+file has a particular structure. It has
+ 
+
+163
+00:02:48,400 --> 00:02:50,630
+file has a particular structure. It has
+this YAML front matter and it has then
+
+164
+00:02:50,630 --> 00:02:50,640
+this YAML front matter and it has then
+ 
+
+165
+00:02:50,640 --> 00:02:52,070
+this YAML front matter and it has then
+the rest of the instructions just as
+
+166
+00:02:52,070 --> 00:02:52,080
+the rest of the instructions just as
+ 
+
+167
+00:02:52,080 --> 00:02:53,750
+the rest of the instructions just as
+markdown. Now the thing that's
+
+168
+00:02:53,750 --> 00:02:53,760
+markdown. Now the thing that's
+ 
+
+169
+00:02:53,760 --> 00:02:55,990
+markdown. Now the thing that's
+interesting is this YAML front matter is
+
+170
+00:02:55,990 --> 00:02:56,000
+interesting is this YAML front matter is
+ 
+
+171
+00:02:56,000 --> 00:02:57,670
+interesting is this YAML front matter is
+always loaded into the system prompt of
+
+172
+00:02:57,670 --> 00:02:57,680
+always loaded into the system prompt of
+ 
+
+173
+00:02:57,680 --> 00:02:59,190
+always loaded into the system prompt of
+the agent. This is how it works with
+
+174
+00:02:59,190 --> 00:02:59,200
+the agent. This is how it works with
+ 
+
+175
+00:02:59,200 --> 00:03:00,790
+the agent. This is how it works with
+cloud code. This is how we implemented
+
+176
+00:03:00,790 --> 00:03:00,800
+cloud code. This is how we implemented
+ 
+
+177
+00:03:00,800 --> 00:03:03,589
+cloud code. This is how we implemented
+it with the deep agent CLI. So this YAML
+
+178
+00:03:03,589 --> 00:03:03,599
+it with the deep agent CLI. So this YAML
+ 
+
+179
+00:03:03,599 --> 00:03:06,070
+it with the deep agent CLI. So this YAML
+front matter is a very very context
+
+180
+00:03:06,070 --> 00:03:06,080
+front matter is a very very context
+ 
+
+181
+00:03:06,080 --> 00:03:08,229
+front matter is a very very context
+summary of what the skill does. If you
+
+182
+00:03:08,229 --> 00:03:08,239
+summary of what the skill does. If you
+ 
+
+183
+00:03:08,239 --> 00:03:10,149
+summary of what the skill does. If you
+go to the deep agents repo, go to the
+
+184
+00:03:10,149 --> 00:03:10,159
+go to the deep agents repo, go to the
+ 
+
+185
+00:03:10,159 --> 00:03:12,390
+go to the deep agents repo, go to the
+deep agent CLI folder, you see this
+
+186
+00:03:12,390 --> 00:03:12,400
+deep agent CLI folder, you see this
+ 
+
+187
+00:03:12,400 --> 00:03:14,229
+deep agent CLI folder, you see this
+example subfolder, open it up, you'll
+
+188
+00:03:14,229 --> 00:03:14,239
+example subfolder, open it up, you'll
+ 
+
+189
+00:03:14,239 --> 00:03:16,790
+example subfolder, open it up, you'll
+see skills and you can actually see the
+
+190
+00:03:16,790 --> 00:03:16,800
+see skills and you can actually see the
+ 
+
+191
+00:03:16,800 --> 00:03:18,630
+see skills and you can actually see the
+skill. MD file for that web research
+
+192
+00:03:18,630 --> 00:03:18,640
+skill. MD file for that web research
+ 
+
+193
+00:03:18,640 --> 00:03:20,710
+skill. MD file for that web research
+skill. Open that up and here you go. So
+
+194
+00:03:20,710 --> 00:03:20,720
+skill. Open that up and here you go. So
+ 
+
+195
+00:03:20,720 --> 00:03:22,470
+skill. Open that up and here you go. So
+there's that YAML front matter. Very
+
+196
+00:03:22,470 --> 00:03:22,480
+there's that YAML front matter. Very
+ 
+
+197
+00:03:22,480 --> 00:03:25,110
+there's that YAML front matter. Very
+nice. And then here is the full skill
+
+198
+00:03:25,110 --> 00:03:25,120
+nice. And then here is the full skill
+ 
+
+199
+00:03:25,120 --> 00:03:28,070
+nice. And then here is the full skill
+and this outlines in detail how I want
+
+200
+00:03:28,070 --> 00:03:28,080
+and this outlines in detail how I want
+ 
+
+201
+00:03:28,080 --> 00:03:30,710
+and this outlines in detail how I want
+the agent to conduct research. Now this
+
+202
+00:03:30,710 --> 00:03:30,720
+the agent to conduct research. Now this
+ 
+
+203
+00:03:30,720 --> 00:03:32,149
+the agent to conduct research. Now this
+is just markdown. You can modify this in
+
+204
+00:03:32,149 --> 00:03:32,159
+is just markdown. You can modify this in
+ 
+
+205
+00:03:32,159 --> 00:03:33,270
+is just markdown. You can modify this in
+any way you want. It just provides
+
+206
+00:03:33,270 --> 00:03:33,280
+any way you want. It just provides
+ 
+
+207
+00:03:33,280 --> 00:03:34,949
+any way you want. It just provides
+instructions to the agent about how to
+
+208
+00:03:34,949 --> 00:03:34,959
+instructions to the agent about how to
+ 
+
+209
+00:03:34,959 --> 00:03:38,309
+instructions to the agent about how to
+use it native tools to accomplish tasks.
+
+210
+00:03:38,309 --> 00:03:38,319
+use it native tools to accomplish tasks.
+ 
+
+211
+00:03:38,319 --> 00:03:39,589
+use it native tools to accomplish tasks.
+Now, one of the important ideas here is
+
+212
+00:03:39,589 --> 00:03:39,599
+Now, one of the important ideas here is
+ 
+
+213
+00:03:39,599 --> 00:03:40,869
+Now, one of the important ideas here is
+what Anthropic calls progressive
+
+214
+00:03:40,869 --> 00:03:40,879
+what Anthropic calls progressive
+ 
+
+215
+00:03:40,879 --> 00:03:43,110
+what Anthropic calls progressive
+disclosure. So that basically means that
+
+216
+00:03:43,110 --> 00:03:43,120
+disclosure. So that basically means that
+ 
+
+217
+00:03:43,120 --> 00:03:44,869
+disclosure. So that basically means that
+the YAML front matter is the only thing
+
+218
+00:03:44,869 --> 00:03:44,879
+the YAML front matter is the only thing
+ 
+
+219
+00:03:44,879 --> 00:03:46,630
+the YAML front matter is the only thing
+pre-loaded in the system prompt. So
+
+220
+00:03:46,630 --> 00:03:46,640
+pre-loaded in the system prompt. So
+ 
+
+221
+00:03:46,640 --> 00:03:48,789
+pre-loaded in the system prompt. So
+you're not overloading your agent with a
+
+222
+00:03:48,789 --> 00:03:48,799
+you're not overloading your agent with a
+ 
+
+223
+00:03:48,799 --> 00:03:51,990
+you're not overloading your agent with a
+whole bunch of kind of lengthy skill
+
+224
+00:03:51,990 --> 00:03:52,000
+whole bunch of kind of lengthy skill
+ 
+
+225
+00:03:52,000 --> 00:03:53,270
+whole bunch of kind of lengthy skill
+descriptions. You're only loading that
+
+226
+00:03:53,270 --> 00:03:53,280
+descriptions. You're only loading that
+ 
+
+227
+00:03:53,280 --> 00:03:55,589
+descriptions. You're only loading that
+YAML front matter. The agent can see all
+
+228
+00:03:55,589 --> 00:03:55,599
+YAML front matter. The agent can see all
+ 
+
+229
+00:03:55,599 --> 00:03:57,910
+YAML front matter. The agent can see all
+those and then decide, hey, if it wants
+
+230
+00:03:57,910 --> 00:03:57,920
+those and then decide, hey, if it wants
+ 
+
+231
+00:03:57,920 --> 00:03:59,429
+those and then decide, hey, if it wants
+to use a skill, it's instructed then go
+
+232
+00:03:59,429 --> 00:03:59,439
+to use a skill, it's instructed then go
+ 
+
+233
+00:03:59,439 --> 00:04:01,509
+to use a skill, it's instructed then go
+ahead and read this full skill MD file.
+
+234
+00:04:01,509 --> 00:04:01,519
+ahead and read this full skill MD file.
+ 
+
+235
+00:04:01,519 --> 00:04:03,509
+ahead and read this full skill MD file.
+Now the skillmd just lives in a
+
+236
+00:04:03,509 --> 00:04:03,519
+Now the skillmd just lives in a
+ 
+
+237
+00:04:03,519 --> 00:04:04,789
+Now the skillmd just lives in a
+directory and in the directory you can
+
+238
+00:04:04,789 --> 00:04:04,799
+directory and in the directory you can
+ 
+
+239
+00:04:04,799 --> 00:04:06,869
+directory and in the directory you can
+have other files. You can have scripts
+
+240
+00:04:06,869 --> 00:04:06,879
+have other files. You can have scripts
+ 
+
+241
+00:04:06,879 --> 00:04:10,869
+have other files. You can have scripts
+to run that can all just be explained in
+
+242
+00:04:10,869 --> 00:04:10,879
+to run that can all just be explained in
+ 
+
+243
+00:04:10,879 --> 00:04:13,190
+to run that can all just be explained in
+the body of that skillmd file. Now
+
+244
+00:04:13,190 --> 00:04:13,200
+the body of that skillmd file. Now
+ 
+
+245
+00:04:13,200 --> 00:04:14,789
+the body of that skillmd file. Now
+here's the key point. If you're using
+
+246
+00:04:14,789 --> 00:04:14,799
+here's the key point. If you're using
+ 
+
+247
+00:04:14,799 --> 00:04:17,509
+here's the key point. If you're using
+cloud code for example cloud code is a
+
+248
+00:04:17,509 --> 00:04:17,519
+cloud code for example cloud code is a
+ 
+
+249
+00:04:17,519 --> 00:04:20,229
+cloud code for example cloud code is a
+bunch of native tools for file access
+
+250
+00:04:20,229 --> 00:04:20,239
+bunch of native tools for file access
+ 
+
+251
+00:04:20,239 --> 00:04:22,550
+bunch of native tools for file access
+using the shell and so it can read any
+
+252
+00:04:22,550 --> 00:04:22,560
+using the shell and so it can read any
+ 
+
+253
+00:04:22,560 --> 00:04:24,150
+using the shell and so it can read any
+of these files. It can execute any
+
+254
+00:04:24,150 --> 00:04:24,160
+of these files. It can execute any
+ 
+
+255
+00:04:24,160 --> 00:04:26,710
+of these files. It can execute any
+scripts using the bash tool. So using a
+
+256
+00:04:26,710 --> 00:04:26,720
+scripts using the bash tool. So using a
+ 
+
+257
+00:04:26,720 --> 00:04:28,150
+scripts using the bash tool. So using a
+small set of native tools that can
+
+258
+00:04:28,150 --> 00:04:28,160
+small set of native tools that can
+ 
+
+259
+00:04:28,160 --> 00:04:30,070
+small set of native tools that can
+implement whatever you specify in the
+
+260
+00:04:30,070 --> 00:04:30,080
+implement whatever you specify in the
+ 
+
+261
+00:04:30,080 --> 00:04:32,390
+implement whatever you specify in the
+skillmd files, we've borrowed a lot of
+
+262
+00:04:32,390 --> 00:04:32,400
+skillmd files, we've borrowed a lot of
+ 
+
+263
+00:04:32,400 --> 00:04:34,469
+skillmd files, we've borrowed a lot of
+those same ideas for the deep agent CLI.
+
+264
+00:04:34,469 --> 00:04:34,479
+those same ideas for the deep agent CLI.
+ 
+
+265
+00:04:34,479 --> 00:04:36,230
+those same ideas for the deep agent CLI.
+We have a shell tool. We have file
+
+266
+00:04:36,230 --> 00:04:36,240
+We have a shell tool. We have file
+ 
+
+267
+00:04:36,240 --> 00:04:38,230
+We have a shell tool. We have file
+manipulation tools. And so all you need
+
+268
+00:04:38,230 --> 00:04:38,240
+manipulation tools. And so all you need
+ 
+
+269
+00:04:38,240 --> 00:04:40,070
+manipulation tools. And so all you need
+to do in the skillmd file is just say,
+
+270
+00:04:40,070 --> 00:04:40,080
+to do in the skillmd file is just say,
+ 
+
+271
+00:04:40,080 --> 00:04:41,990
+to do in the skillmd file is just say,
+hey, what to do? Any scripts you want to
+
+272
+00:04:41,990 --> 00:04:42,000
+hey, what to do? Any scripts you want to
+ 
+
+273
+00:04:42,000 --> 00:04:43,830
+hey, what to do? Any scripts you want to
+run, it can use this bash tool. Any
+
+274
+00:04:43,830 --> 00:04:43,840
+run, it can use this bash tool. Any
+ 
+
+275
+00:04:43,840 --> 00:04:45,670
+run, it can use this bash tool. Any
+files you want to read, it can use it to
+
+276
+00:04:45,670 --> 00:04:45,680
+files you want to read, it can use it to
+ 
+
+277
+00:04:45,680 --> 00:04:48,469
+files you want to read, it can use it to
+read file tool and so forth. So all
+
+278
+00:04:48,469 --> 00:04:48,479
+read file tool and so forth. So all
+ 
+
+279
+00:04:48,479 --> 00:04:49,749
+read file tool and so forth. So all
+you're doing in the skillmd file is
+
+280
+00:04:49,749 --> 00:04:49,759
+you're doing in the skillmd file is
+ 
+
+281
+00:04:49,759 --> 00:04:51,350
+you're doing in the skillmd file is
+you're providing context that the agent
+
+282
+00:04:51,350 --> 00:04:51,360
+you're providing context that the agent
+ 
+
+283
+00:04:51,360 --> 00:04:53,749
+you're providing context that the agent
+can use using its native tools to do
+
+284
+00:04:53,749 --> 00:04:53,759
+can use using its native tools to do
+ 
+
+285
+00:04:53,759 --> 00:04:56,310
+can use using its native tools to do
+stuff, execute scripts that live in the
+
+286
+00:04:56,310 --> 00:04:56,320
+stuff, execute scripts that live in the
+ 
+
+287
+00:04:56,320 --> 00:04:57,990
+stuff, execute scripts that live in the
+folder, read files that live in the
+
+288
+00:04:57,990 --> 00:04:58,000
+folder, read files that live in the
+ 
+
+289
+00:04:58,000 --> 00:05:00,150
+folder, read files that live in the
+folder, and so forth. Now, if we pull
+
+290
+00:05:00,150 --> 00:05:00,160
+folder, and so forth. Now, if we pull
+ 
+
+291
+00:05:00,160 --> 00:05:01,590
+folder, and so forth. Now, if we pull
+back even a little bit further, why is
+
+292
+00:05:01,590 --> 00:05:01,600
+back even a little bit further, why is
+ 
+
+293
+00:05:01,600 --> 00:05:03,350
+back even a little bit further, why is
+this interesting? Well, with agents, we
+
+294
+00:05:03,350 --> 00:05:03,360
+this interesting? Well, with agents, we
+ 
+
+295
+00:05:03,360 --> 00:05:05,670
+this interesting? Well, with agents, we
+actually want agents to perform actions.
+
+296
+00:05:05,670 --> 00:05:05,680
+actually want agents to perform actions.
+ 
+
+297
+00:05:05,680 --> 00:05:06,950
+actually want agents to perform actions.
+We want agents to be able to do things
+
+298
+00:05:06,950 --> 00:05:06,960
+We want agents to be able to do things
+ 
+
+299
+00:05:06,960 --> 00:05:08,390
+We want agents to be able to do things
+in the world. That could be execute
+
+300
+00:05:08,390 --> 00:05:08,400
+in the world. That could be execute
+ 
+
+301
+00:05:08,400 --> 00:05:10,629
+in the world. That could be execute
+code, that could be perform web search,
+
+302
+00:05:10,629 --> 00:05:10,639
+code, that could be perform web search,
+ 
+
+303
+00:05:10,639 --> 00:05:12,390
+code, that could be perform web search,
+that could be other things. Now, we did
+
+304
+00:05:12,390 --> 00:05:12,400
+that could be other things. Now, we did
+ 
+
+305
+00:05:12,400 --> 00:05:15,029
+that could be other things. Now, we did
+a webinar with Manis a few months ago
+
+306
+00:05:15,029 --> 00:05:15,039
+a webinar with Manis a few months ago
+ 
+
+307
+00:05:15,039 --> 00:05:17,110
+a webinar with Manis a few months ago
+and they talked a lot about this action
+
+308
+00:05:17,110 --> 00:05:17,120
+and they talked a lot about this action
+ 
+
+309
+00:05:17,120 --> 00:05:18,870
+and they talked a lot about this action
+space and how to design the action space
+
+310
+00:05:18,870 --> 00:05:18,880
+space and how to design the action space
+ 
+
+311
+00:05:18,880 --> 00:05:20,629
+space and how to design the action space
+accordingly. And one of the principles
+
+312
+00:05:20,629 --> 00:05:20,639
+accordingly. And one of the principles
+ 
+
+313
+00:05:20,639 --> 00:05:23,189
+accordingly. And one of the principles
+they talked about a lot is use a small
+
+314
+00:05:23,189 --> 00:05:23,199
+they talked about a lot is use a small
+ 
+
+315
+00:05:23,199 --> 00:05:25,430
+they talked about a lot is use a small
+number of atomic tools at the function
+
+316
+00:05:25,430 --> 00:05:25,440
+number of atomic tools at the function
+ 
+
+317
+00:05:25,440 --> 00:05:27,510
+number of atomic tools at the function
+calling layer or the tool calling layer
+
+318
+00:05:27,510 --> 00:05:27,520
+calling layer or the tool calling layer
+ 
+
+319
+00:05:27,520 --> 00:05:29,029
+calling layer or the tool calling layer
+but give the agent access to a file
+
+320
+00:05:29,029 --> 00:05:29,039
+but give the agent access to a file
+ 
+
+321
+00:05:29,039 --> 00:05:30,950
+but give the agent access to a file
+system where it can just run scripts if
+
+322
+00:05:30,950 --> 00:05:30,960
+system where it can just run scripts if
+ 
+
+323
+00:05:30,960 --> 00:05:32,710
+system where it can just run scripts if
+it wants to perform additional actions.
+
+324
+00:05:32,710 --> 00:05:32,720
+it wants to perform additional actions.
+ 
+
+325
+00:05:32,720 --> 00:05:34,070
+it wants to perform additional actions.
+This is a subtle but very interesting
+
+326
+00:05:34,070 --> 00:05:34,080
+This is a subtle but very interesting
+ 
+
+327
+00:05:34,080 --> 00:05:36,390
+This is a subtle but very interesting
+point. So for example with manis just
+
+328
+00:05:36,390 --> 00:05:36,400
+point. So for example with manis just
+ 
+
+329
+00:05:36,400 --> 00:05:38,790
+point. So for example with manis just
+like cloud code just like deep agent CLI
+
+330
+00:05:38,790 --> 00:05:38,800
+like cloud code just like deep agent CLI
+ 
+
+331
+00:05:38,800 --> 00:05:41,670
+like cloud code just like deep agent CLI
+has a small number of native tools shell
+
+332
+00:05:41,670 --> 00:05:41,680
+has a small number of native tools shell
+ 
+
+333
+00:05:41,680 --> 00:05:45,110
+has a small number of native tools shell
+tool file manipulation tools but it gave
+
+334
+00:05:45,110 --> 00:05:45,120
+tool file manipulation tools but it gave
+ 
+
+335
+00:05:45,120 --> 00:05:46,550
+tool file manipulation tools but it gave
+but the agent has access to a whole
+
+336
+00:05:46,550 --> 00:05:46,560
+but the agent has access to a whole
+ 
+
+337
+00:05:46,560 --> 00:05:48,150
+but the agent has access to a whole
+bunch of scripts that live inside in
+
+338
+00:05:48,150 --> 00:05:48,160
+bunch of scripts that live inside in
+ 
+
+339
+00:05:48,160 --> 00:05:49,990
+bunch of scripts that live inside in
+that case it sandbox environment same
+
+340
+00:05:49,990 --> 00:05:50,000
+that case it sandbox environment same
+ 
+
+341
+00:05:50,000 --> 00:05:52,710
+that case it sandbox environment same
+deal here with skill we're giving deep
+
+342
+00:05:52,710 --> 00:05:52,720
+deal here with skill we're giving deep
+ 
+
+343
+00:05:52,720 --> 00:05:55,350
+deal here with skill we're giving deep
+agent cli or claw code access to a
+
+344
+00:05:55,350 --> 00:05:55,360
+agent cli or claw code access to a
+ 
+
+345
+00:05:55,360 --> 00:05:57,749
+agent cli or claw code access to a
+directory of skills which can have
+
+346
+00:05:57,749 --> 00:05:57,759
+directory of skills which can have
+ 
+
+347
+00:05:57,759 --> 00:05:59,110
+directory of skills which can have
+anything we want in it we could just
+
+348
+00:05:59,110 --> 00:05:59,120
+anything we want in it we could just
+ 
+
+349
+00:05:59,120 --> 00:06:01,590
+anything we want in it we could just
+throw in scripts we could throw in files
+
+350
+00:06:01,590 --> 00:06:01,600
+throw in scripts we could throw in files
+ 
+
+351
+00:06:01,600 --> 00:06:04,550
+throw in scripts we could throw in files
+and using the native shell tool as well
+
+352
+00:06:04,550 --> 00:06:04,560
+and using the native shell tool as well
+ 
+
+353
+00:06:04,560 --> 00:06:06,870
+and using the native shell tool as well
+as file manipulation tools. The agent
+
+354
+00:06:06,870 --> 00:06:06,880
+as file manipulation tools. The agent
+ 
+
+355
+00:06:06,880 --> 00:06:08,629
+as file manipulation tools. The agent
+can read these directories, poke through
+
+356
+00:06:08,629 --> 00:06:08,639
+can read these directories, poke through
+ 
+
+357
+00:06:08,639 --> 00:06:11,350
+can read these directories, poke through
+them, run any scripts it wants. And this
+
+358
+00:06:11,350 --> 00:06:11,360
+them, run any scripts it wants. And this
+ 
+
+359
+00:06:11,360 --> 00:06:12,950
+them, run any scripts it wants. And this
+is a way to expand the action space
+
+360
+00:06:12,950 --> 00:06:12,960
+is a way to expand the action space
+ 
+
+361
+00:06:12,960 --> 00:06:15,110
+is a way to expand the action space
+significantly without loading up a whole
+
+362
+00:06:15,110 --> 00:06:15,120
+significantly without loading up a whole
+ 
+
+363
+00:06:15,120 --> 00:06:17,029
+significantly without loading up a whole
+bunch of different functions. Now, let's
+
+364
+00:06:17,029 --> 00:06:17,039
+bunch of different functions. Now, let's
+ 
+
+365
+00:06:17,039 --> 00:06:18,309
+bunch of different functions. Now, let's
+walk through this table. Why is that
+
+366
+00:06:18,309 --> 00:06:18,319
+walk through this table. Why is that
+ 
+
+367
+00:06:18,319 --> 00:06:19,590
+walk through this table. Why is that
+interesting? Well, let's say we want the
+
+368
+00:06:19,590 --> 00:06:19,600
+interesting? Well, let's say we want the
+ 
+
+369
+00:06:19,600 --> 00:06:21,510
+interesting? Well, let's say we want the
+agent to have five different actions. We
+
+370
+00:06:21,510 --> 00:06:21,520
+agent to have five different actions. We
+ 
+
+371
+00:06:21,520 --> 00:06:23,029
+agent to have five different actions. We
+can load those all as independent
+
+372
+00:06:23,029 --> 00:06:23,039
+can load those all as independent
+ 
+
+373
+00:06:23,039 --> 00:06:24,790
+can load those all as independent
+functions or tools. So, that means they
+
+374
+00:06:24,790 --> 00:06:24,800
+functions or tools. So, that means they
+ 
+
+375
+00:06:24,800 --> 00:06:26,390
+functions or tools. So, that means they
+get bound to the model itself. And
+
+376
+00:06:26,390 --> 00:06:26,400
+get bound to the model itself. And
+ 
+
+377
+00:06:26,400 --> 00:06:28,150
+get bound to the model itself. And
+typically what happens is when you bind
+
+378
+00:06:28,150 --> 00:06:28,160
+typically what happens is when you bind
+ 
+
+379
+00:06:28,160 --> 00:06:30,550
+typically what happens is when you bind
+a tool to the model, you bind the full
+
+380
+00:06:30,550 --> 00:06:30,560
+a tool to the model, you bind the full
+ 
+
+381
+00:06:30,560 --> 00:06:32,230
+a tool to the model, you bind the full
+tool description. And this can be quite
+
+382
+00:06:32,230 --> 00:06:32,240
+tool description. And this can be quite
+ 
+
+383
+00:06:32,240 --> 00:06:34,070
+tool description. And this can be quite
+tokenheavy, particularly if you have
+
+384
+00:06:34,070 --> 00:06:34,080
+tokenheavy, particularly if you have
+ 
+
+385
+00:06:34,080 --> 00:06:35,990
+tokenheavy, particularly if you have
+like say hundreds of tools. You're
+
+386
+00:06:35,990 --> 00:06:36,000
+like say hundreds of tools. You're
+ 
+
+387
+00:06:36,000 --> 00:06:39,029
+like say hundreds of tools. You're
+binding all those tools as well as their
+
+388
+00:06:39,029 --> 00:06:39,039
+binding all those tools as well as their
+ 
+
+389
+00:06:39,039 --> 00:06:40,870
+binding all those tools as well as their
+descriptions. Now with skills, the nice
+
+390
+00:06:40,870 --> 00:06:40,880
+descriptions. Now with skills, the nice
+ 
+
+391
+00:06:40,880 --> 00:06:43,110
+descriptions. Now with skills, the nice
+thing is you're only supplying that YAML
+
+392
+00:06:43,110 --> 00:06:43,120
+thing is you're only supplying that YAML
+ 
+
+393
+00:06:43,120 --> 00:06:44,550
+thing is you're only supplying that YAML
+front matter. It's a quick summary of
+
+394
+00:06:44,550 --> 00:06:44,560
+front matter. It's a quick summary of
+ 
+
+395
+00:06:44,560 --> 00:06:47,110
+front matter. It's a quick summary of
+when to actually use the skill, which
+
+396
+00:06:47,110 --> 00:06:47,120
+when to actually use the skill, which
+ 
+
+397
+00:06:47,120 --> 00:06:48,790
+when to actually use the skill, which
+really just means when to actually read
+
+398
+00:06:48,790 --> 00:06:48,800
+really just means when to actually read
+ 
+
+399
+00:06:48,800 --> 00:06:50,629
+really just means when to actually read
+that full skill.mmd file to find out
+
+400
+00:06:50,629 --> 00:06:50,639
+that full skill.mmd file to find out
+ 
+
+401
+00:06:50,639 --> 00:06:52,309
+that full skill.mmd file to find out
+what it's really all about and what to
+
+402
+00:06:52,309 --> 00:06:52,319
+what it's really all about and what to
+ 
+
+403
+00:06:52,319 --> 00:06:54,309
+what it's really all about and what to
+do. So that YAML front matter really
+
+404
+00:06:54,309 --> 00:06:54,319
+do. So that YAML front matter really
+ 
+
+405
+00:06:54,319 --> 00:06:55,990
+do. So that YAML front matter really
+provides the agent with a clue about
+
+406
+00:06:55,990 --> 00:06:56,000
+provides the agent with a clue about
+ 
+
+407
+00:06:56,000 --> 00:06:57,749
+provides the agent with a clue about
+when to go ahead and execute the skill
+
+408
+00:06:57,749 --> 00:06:57,759
+when to go ahead and execute the skill
+ 
+
+409
+00:06:57,759 --> 00:06:59,589
+when to go ahead and execute the skill
+by reading that full skill.mmd file.
+
+410
+00:06:59,589 --> 00:06:59,599
+by reading that full skill.mmd file.
+ 
+
+411
+00:06:59,599 --> 00:07:00,710
+by reading that full skill.mmd file.
+Now, here's the thing that's really not.
+
+412
+00:07:00,710 --> 00:07:00,720
+Now, here's the thing that's really not.
+ 
+
+413
+00:07:00,720 --> 00:07:02,309
+Now, here's the thing that's really not.
+If you bind a bunch of additional tools
+
+414
+00:07:02,309 --> 00:07:02,319
+If you bind a bunch of additional tools
+ 
+
+415
+00:07:02,319 --> 00:07:04,390
+If you bind a bunch of additional tools
+to your model, could be via MCP, could
+
+416
+00:07:04,390 --> 00:07:04,400
+to your model, could be via MCP, could
+ 
+
+417
+00:07:04,400 --> 00:07:06,950
+to your model, could be via MCP, could
+be via handrolled tools, you're bloating
+
+418
+00:07:06,950 --> 00:07:06,960
+be via handrolled tools, you're bloating
+ 
+
+419
+00:07:06,960 --> 00:07:08,950
+be via handrolled tools, you're bloating
+up that tool calling space. So you think
+
+420
+00:07:08,950 --> 00:07:08,960
+up that tool calling space. So you think
+ 
+
+421
+00:07:08,960 --> 00:07:11,350
+up that tool calling space. So you think
+about an agent has access to some number
+
+422
+00:07:11,350 --> 00:07:11,360
+about an agent has access to some number
+ 
+
+423
+00:07:11,360 --> 00:07:13,430
+about an agent has access to some number
+of tools. It has to make a decision at
+
+424
+00:07:13,430 --> 00:07:13,440
+of tools. It has to make a decision at
+ 
+
+425
+00:07:13,440 --> 00:07:16,070
+of tools. It has to make a decision at
+each turn about what tools to use. If
+
+426
+00:07:16,070 --> 00:07:16,080
+each turn about what tools to use. If
+ 
+
+427
+00:07:16,080 --> 00:07:17,749
+each turn about what tools to use. If
+you bloat up that tool calling space, it
+
+428
+00:07:17,749 --> 00:07:17,759
+you bloat up that tool calling space, it
+ 
+
+429
+00:07:17,759 --> 00:07:19,510
+you bloat up that tool calling space, it
+can get more confused. For example, you
+
+430
+00:07:19,510 --> 00:07:19,520
+can get more confused. For example, you
+ 
+
+431
+00:07:19,520 --> 00:07:20,950
+can get more confused. For example, you
+can bind two different tools that are
+
+432
+00:07:20,950 --> 00:07:20,960
+can bind two different tools that are
+ 
+
+433
+00:07:20,960 --> 00:07:22,309
+can bind two different tools that are
+very similar to the agent. It won't know
+
+434
+00:07:22,309 --> 00:07:22,319
+very similar to the agent. It won't know
+ 
+
+435
+00:07:22,319 --> 00:07:24,309
+very similar to the agent. It won't know
+which one to call. This happens a lot.
+
+436
+00:07:24,309 --> 00:07:24,319
+which one to call. This happens a lot.
+ 
+
+437
+00:07:24,319 --> 00:07:27,430
+which one to call. This happens a lot.
+People often talk about oh should I bind
+
+438
+00:07:27,430 --> 00:07:27,440
+People often talk about oh should I bind
+ 
+
+439
+00:07:27,440 --> 00:07:29,270
+People often talk about oh should I bind
+what happens when I bind 20 tools 50
+
+440
+00:07:29,270 --> 00:07:29,280
+what happens when I bind 20 tools 50
+ 
+
+441
+00:07:29,280 --> 00:07:31,189
+what happens when I bind 20 tools 50
+tools 100 tools to a model and some
+
+442
+00:07:31,189 --> 00:07:31,199
+tools 100 tools to a model and some
+ 
+
+443
+00:07:31,199 --> 00:07:33,430
+tools 100 tools to a model and some
+people even flex that oh okay my agent
+
+444
+00:07:33,430 --> 00:07:33,440
+people even flex that oh okay my agent
+ 
+
+445
+00:07:33,440 --> 00:07:35,430
+people even flex that oh okay my agent
+has 100 tools what you're seeing with
+
+446
+00:07:35,430 --> 00:07:35,440
+has 100 tools what you're seeing with
+ 
+
+447
+00:07:35,440 --> 00:07:36,469
+has 100 tools what you're seeing with
+more state-of-the-art agents like
+
+448
+00:07:36,469 --> 00:07:36,479
+more state-of-the-art agents like
+ 
+
+449
+00:07:36,479 --> 00:07:38,790
+more state-of-the-art agents like
+maniscloud code is actually small number
+
+450
+00:07:38,790 --> 00:07:38,800
+maniscloud code is actually small number
+ 
+
+451
+00:07:38,800 --> 00:07:41,830
+maniscloud code is actually small number
+of tools less than 20 but give it access
+
+452
+00:07:41,830 --> 00:07:41,840
+of tools less than 20 but give it access
+ 
+
+453
+00:07:41,840 --> 00:07:44,070
+of tools less than 20 but give it access
+to file system where it can just execute
+
+454
+00:07:44,070 --> 00:07:44,080
+to file system where it can just execute
+ 
+
+455
+00:07:44,080 --> 00:07:45,749
+to file system where it can just execute
+where it can use its bash tool to
+
+456
+00:07:45,749 --> 00:07:45,759
+where it can use its bash tool to
+ 
+
+457
+00:07:45,759 --> 00:07:47,270
+where it can use its bash tool to
+execute scripts if it needs to perform
+
+458
+00:07:47,270 --> 00:07:47,280
+execute scripts if it needs to perform
+ 
+
+459
+00:07:47,280 --> 00:07:48,790
+execute scripts if it needs to perform
+additional actions. The point is that
+
+460
+00:07:48,790 --> 00:07:48,800
+additional actions. The point is that
+ 
+
+461
+00:07:48,800 --> 00:07:50,230
+additional actions. The point is that
+skills are a nice way to expand the
+
+462
+00:07:50,230 --> 00:07:50,240
+skills are a nice way to expand the
+ 
+
+463
+00:07:50,240 --> 00:07:52,550
+skills are a nice way to expand the
+action space of your agent without
+
+464
+00:07:52,550 --> 00:07:52,560
+action space of your agent without
+ 
+
+465
+00:07:52,560 --> 00:07:54,150
+action space of your agent without
+actually bloating your function calling
+
+466
+00:07:54,150 --> 00:07:54,160
+actually bloating your function calling
+ 
+
+467
+00:07:54,160 --> 00:07:55,510
+actually bloating your function calling
+layer, which is very important because
+
+468
+00:07:55,510 --> 00:07:55,520
+layer, which is very important because
+ 
+
+469
+00:07:55,520 --> 00:07:57,990
+layer, which is very important because
+more functions mean more tokens and
+
+470
+00:07:57,990 --> 00:07:58,000
+more functions mean more tokens and
+ 
+
+471
+00:07:58,000 --> 00:07:59,909
+more functions mean more tokens and
+function descriptions, but also more
+
+472
+00:07:59,909 --> 00:07:59,919
+function descriptions, but also more
+ 
+
+473
+00:07:59,919 --> 00:08:02,230
+function descriptions, but also more
+cognitive load on the model itself. It
+
+474
+00:08:02,230 --> 00:08:02,240
+cognitive load on the model itself. It
+ 
+
+475
+00:08:02,240 --> 00:08:03,909
+cognitive load on the model itself. It
+has to choose what tool to call at what
+
+476
+00:08:03,909 --> 00:08:03,919
+has to choose what tool to call at what
+ 
+
+477
+00:08:03,919 --> 00:08:05,670
+has to choose what tool to call at what
+turn. The more tools you add, the more
+
+478
+00:08:05,670 --> 00:08:05,680
+turn. The more tools you add, the more
+ 
+
+479
+00:08:05,680 --> 00:08:07,270
+turn. The more tools you add, the more
+potential for confusion. Now, what's the
+
+480
+00:08:07,270 --> 00:08:07,280
+potential for confusion. Now, what's the
+ 
+
+481
+00:08:07,280 --> 00:08:09,510
+potential for confusion. Now, what's the
+catch here? Well, the catch is you need
+
+482
+00:08:09,510 --> 00:08:09,520
+catch here? Well, the catch is you need
+ 
+
+483
+00:08:09,520 --> 00:08:11,110
+catch here? Well, the catch is you need
+access to a file system. So, there's a
+
+484
+00:08:11,110 --> 00:08:11,120
+access to a file system. So, there's a
+ 
+
+485
+00:08:11,120 --> 00:08:12,550
+access to a file system. So, there's a
+very nice write up I link here from
+
+486
+00:08:12,550 --> 00:08:12,560
+very nice write up I link here from
+ 
+
+487
+00:08:12,560 --> 00:08:14,469
+very nice write up I link here from
+Simon Willis talking about skills, and
+
+488
+00:08:14,469 --> 00:08:14,479
+Simon Willis talking about skills, and
+ 
+
+489
+00:08:14,479 --> 00:08:16,230
+Simon Willis talking about skills, and
+he highlights that really as a critical
+
+490
+00:08:16,230 --> 00:08:16,240
+he highlights that really as a critical
+ 
+
+491
+00:08:16,240 --> 00:08:17,510
+he highlights that really as a critical
+dependency, and I agree with that. that
+
+492
+00:08:17,510 --> 00:08:17,520
+dependency, and I agree with that. that
+ 
+
+493
+00:08:17,520 --> 00:08:19,510
+dependency, and I agree with that. that
+I mean listen you need to give the agent
+
+494
+00:08:19,510 --> 00:08:19,520
+I mean listen you need to give the agent
+ 
+
+495
+00:08:19,520 --> 00:08:21,110
+I mean listen you need to give the agent
+access to a computer and this is just a
+
+496
+00:08:21,110 --> 00:08:21,120
+access to a computer and this is just a
+ 
+
+497
+00:08:21,120 --> 00:08:22,869
+access to a computer and this is just a
+quick diagram summarizing all that from
+
+498
+00:08:22,869 --> 00:08:22,879
+quick diagram summarizing all that from
+ 
+
+499
+00:08:22,879 --> 00:08:25,110
+quick diagram summarizing all that from
+anthropic. So basically this is the
+
+500
+00:08:25,110 --> 00:08:25,120
+anthropic. So basically this is the
+ 
+
+501
+00:08:25,120 --> 00:08:27,830
+anthropic. So basically this is the
+context window of the LM this represents
+
+502
+00:08:27,830 --> 00:08:27,840
+context window of the LM this represents
+ 
+
+503
+00:08:27,840 --> 00:08:29,510
+context window of the LM this represents
+the agent system prompt and all these
+
+504
+00:08:29,510 --> 00:08:29,520
+the agent system prompt and all these
+ 
+
+505
+00:08:29,520 --> 00:08:31,589
+the agent system prompt and all these
+YAML front matters loaded up from any
+
+506
+00:08:31,589 --> 00:08:31,599
+YAML front matters loaded up from any
+ 
+
+507
+00:08:31,599 --> 00:08:33,909
+YAML front matters loaded up from any
+skills you give it. So this is this top
+
+508
+00:08:33,909 --> 00:08:33,919
+skills you give it. So this is this top
+ 
+
+509
+00:08:33,919 --> 00:08:35,750
+skills you give it. So this is this top
+thing is all the agent will see when
+
+510
+00:08:35,750 --> 00:08:35,760
+thing is all the agent will see when
+ 
+
+511
+00:08:35,760 --> 00:08:37,990
+thing is all the agent will see when
+it's deciding what skill to actually
+
+512
+00:08:37,990 --> 00:08:38,000
+it's deciding what skill to actually
+ 
+
+513
+00:08:38,000 --> 00:08:40,790
+it's deciding what skill to actually
+call. So here's a request just like we
+
+514
+00:08:40,790 --> 00:08:40,800
+call. So here's a request just like we
+ 
+
+515
+00:08:40,800 --> 00:08:42,630
+call. So here's a request just like we
+did perform web research. Here's an
+
+516
+00:08:42,630 --> 00:08:42,640
+did perform web research. Here's an
+ 
+
+517
+00:08:42,640 --> 00:08:44,949
+did perform web research. Here's an
+example request. In this case, Claude
+
+518
+00:08:44,949 --> 00:08:44,959
+example request. In this case, Claude
+ 
+
+519
+00:08:44,959 --> 00:08:46,710
+example request. In this case, Claude
+will say, "Okay, I'm aware of the
+
+520
+00:08:46,710 --> 00:08:46,720
+will say, "Okay, I'm aware of the
+ 
+
+521
+00:08:46,720 --> 00:08:48,389
+will say, "Okay, I'm aware of the
+various skills that I have. It looks
+
+522
+00:08:48,389 --> 00:08:48,399
+various skills that I have. It looks
+ 
+
+523
+00:08:48,399 --> 00:08:50,230
+various skills that I have. It looks
+like you want to do some PDF stuff.
+
+524
+00:08:50,230 --> 00:08:50,240
+like you want to do some PDF stuff.
+ 
+
+525
+00:08:50,240 --> 00:08:51,750
+like you want to do some PDF stuff.
+Okay, I have a PDF skill. I'm going to
+
+526
+00:08:51,750 --> 00:08:51,760
+Okay, I have a PDF skill. I'm going to
+ 
+
+527
+00:08:51,760 --> 00:08:54,630
+Okay, I have a PDF skill. I'm going to
+read in that skill. Cool." You can see
+
+528
+00:08:54,630 --> 00:08:54,640
+read in that skill. Cool." You can see
+ 
+
+529
+00:08:54,640 --> 00:08:56,790
+read in that skill. Cool." You can see
+it uses this native bash tool to read
+
+530
+00:08:56,790 --> 00:08:56,800
+it uses this native bash tool to read
+ 
+
+531
+00:08:56,800 --> 00:08:58,870
+it uses this native bash tool to read
+skill.md. Great. And then it's going to
+
+532
+00:08:58,870 --> 00:08:58,880
+skill.md. Great. And then it's going to
+ 
+
+533
+00:08:58,880 --> 00:09:01,430
+skill.md. Great. And then it's going to
+use this bash tool to read some
+
+534
+00:09:01,430 --> 00:09:01,440
+use this bash tool to read some
+ 
+
+535
+00:09:01,440 --> 00:09:03,990
+use this bash tool to read some
+additional file in that skill directory
+
+536
+00:09:03,990 --> 00:09:04,000
+additional file in that skill directory
+ 
+
+537
+00:09:04,000 --> 00:09:06,550
+additional file in that skill directory
+based on the initial instructions and so
+
+538
+00:09:06,550 --> 00:09:06,560
+based on the initial instructions and so
+ 
+
+539
+00:09:06,560 --> 00:09:08,710
+based on the initial instructions and so
+forth. So again, the idea is very simply
+
+540
+00:09:08,710 --> 00:09:08,720
+forth. So again, the idea is very simply
+ 
+
+541
+00:09:08,720 --> 00:09:10,230
+forth. So again, the idea is very simply
+my agent has access to the skills
+
+542
+00:09:10,230 --> 00:09:10,240
+my agent has access to the skills
+ 
+
+543
+00:09:10,240 --> 00:09:11,670
+my agent has access to the skills
+directory. You can use this native tools
+
+544
+00:09:11,670 --> 00:09:11,680
+directory. You can use this native tools
+ 
+
+545
+00:09:11,680 --> 00:09:13,509
+directory. You can use this native tools
+to read in skills based on the user's
+
+546
+00:09:13,509 --> 00:09:13,519
+to read in skills based on the user's
+ 
+
+547
+00:09:13,519 --> 00:09:14,790
+to read in skills based on the user's
+request. Now, if you look in the deep
+
+548
+00:09:14,790 --> 00:09:14,800
+request. Now, if you look in the deep
+ 
+
+549
+00:09:14,800 --> 00:09:16,630
+request. Now, if you look in the deep
+agents read me, you can look in this
+
+550
+00:09:16,630 --> 00:09:16,640
+agents read me, you can look in this
+ 
+
+551
+00:09:16,640 --> 00:09:18,949
+agents read me, you can look in this
+deep agent CLI folder. You can see we've
+
+552
+00:09:18,949 --> 00:09:18,959
+deep agent CLI folder. You can see we've
+ 
+
+553
+00:09:18,959 --> 00:09:21,110
+deep agent CLI folder. You can see we've
+updated our read for the deep agent CLI
+
+554
+00:09:21,110 --> 00:09:21,120
+updated our read for the deep agent CLI
+ 
+
+555
+00:09:21,120 --> 00:09:23,030
+updated our read for the deep agent CLI
+to include skills. And this is just one
+
+556
+00:09:23,030 --> 00:09:23,040
+to include skills. And this is just one
+ 
+
+557
+00:09:23,040 --> 00:09:24,630
+to include skills. And this is just one
+implementation of skills. It's all open
+
+558
+00:09:24,630 --> 00:09:24,640
+implementation of skills. It's all open
+ 
+
+559
+00:09:24,640 --> 00:09:26,710
+implementation of skills. It's all open
+source. You can inspect it if you want.
+
+560
+00:09:26,710 --> 00:09:26,720
+source. You can inspect it if you want.
+ 
+
+561
+00:09:26,720 --> 00:09:28,070
+source. You can inspect it if you want.
+And of course, there's other ways to do
+
+562
+00:09:28,070 --> 00:09:28,080
+And of course, there's other ways to do
+ 
+
+563
+00:09:28,080 --> 00:09:29,910
+And of course, there's other ways to do
+this. It follow exactly what we just
+
+564
+00:09:29,910 --> 00:09:29,920
+this. It follow exactly what we just
+ 
+
+565
+00:09:29,920 --> 00:09:31,910
+this. It follow exactly what we just
+talked about from anthropic. You can
+
+566
+00:09:31,910 --> 00:09:31,920
+talked about from anthropic. You can
+ 
+
+567
+00:09:31,920 --> 00:09:34,230
+talked about from anthropic. You can
+poke down here. You can see deep agents
+
+568
+00:09:34,230 --> 00:09:34,240
+poke down here. You can see deep agents
+ 
+
+569
+00:09:34,240 --> 00:09:36,150
+poke down here. You can see deep agents
+is just easily installable like this.
+
+570
+00:09:36,150 --> 00:09:36,160
+is just easily installable like this.
+ 
+
+571
+00:09:36,160 --> 00:09:37,910
+is just easily installable like this.
+Run it in your terminal just by calling
+
+572
+00:09:37,910 --> 00:09:37,920
+Run it in your terminal just by calling
+ 
+
+573
+00:09:37,920 --> 00:09:39,590
+Run it in your terminal just by calling
+deep agents. And if you want to inspect
+
+574
+00:09:39,590 --> 00:09:39,600
+deep agents. And if you want to inspect
+ 
+
+575
+00:09:39,600 --> 00:09:40,949
+deep agents. And if you want to inspect
+any skills, you can just run this
+
+576
+00:09:40,949 --> 00:09:40,959
+any skills, you can just run this
+ 
+
+577
+00:09:40,959 --> 00:09:42,630
+any skills, you can just run this
+command deep agent skills list. Back in
+
+578
+00:09:42,630 --> 00:09:42,640
+command deep agent skills list. Back in
+ 
+
+579
+00:09:42,640 --> 00:09:45,269
+command deep agent skills list. Back in
+my terminal, you can do that. And we can
+
+580
+00:09:45,269 --> 00:09:45,279
+my terminal, you can do that. And we can
+ 
+
+581
+00:09:45,279 --> 00:09:47,269
+my terminal, you can do that. And we can
+see when I run that, I can see I have
+
+582
+00:09:47,269 --> 00:09:47,279
+see when I run that, I can see I have
+ 
+
+583
+00:09:47,279 --> 00:09:49,509
+see when I run that, I can see I have
+these skills available. Project skills,
+
+584
+00:09:49,509 --> 00:09:49,519
+these skills available. Project skills,
+ 
+
+585
+00:09:49,519 --> 00:09:51,030
+these skills available. Project skills,
+global skills, and it shows the paths
+
+586
+00:09:51,030 --> 00:09:51,040
+global skills, and it shows the paths
+ 
+
+587
+00:09:51,040 --> 00:09:52,949
+global skills, and it shows the paths
+too. So the only difference is that
+
+588
+00:09:52,949 --> 00:09:52,959
+too. So the only difference is that
+ 
+
+589
+00:09:52,959 --> 00:09:54,630
+too. So the only difference is that
+these global skills are available across
+
+590
+00:09:54,630 --> 00:09:54,640
+these global skills are available across
+ 
+
+591
+00:09:54,640 --> 00:09:56,630
+these global skills are available across
+any project that I'm using deep agents
+
+592
+00:09:56,630 --> 00:09:56,640
+any project that I'm using deep agents
+ 
+
+593
+00:09:56,640 --> 00:09:59,430
+any project that I'm using deep agents
+in. They live in your home directory in
+
+594
+00:09:59,430 --> 00:09:59,440
+in. They live in your home directory in
+ 
+
+595
+00:09:59,440 --> 00:10:01,829
+in. They live in your home directory in
+deep agents. This is the default agent
+
+596
+00:10:01,829 --> 00:10:01,839
+deep agents. This is the default agent
+ 
+
+597
+00:10:01,839 --> 00:10:03,750
+deep agents. This is the default agent
+I'm working with. The skills directory
+
+598
+00:10:03,750 --> 00:10:03,760
+I'm working with. The skills directory
+ 
+
+599
+00:10:03,760 --> 00:10:05,990
+I'm working with. The skills directory
+and then the various skills folders.
+
+600
+00:10:05,990 --> 00:10:06,000
+and then the various skills folders.
+ 
+
+601
+00:10:06,000 --> 00:10:07,829
+and then the various skills folders.
+That's all we have. Very nice. And in
+
+602
+00:10:07,829 --> 00:10:07,839
+That's all we have. Very nice. And in
+ 
+
+603
+00:10:07,839 --> 00:10:09,590
+That's all we have. Very nice. And in
+this particular repo, I just have a test
+
+604
+00:10:09,590 --> 00:10:09,600
+this particular repo, I just have a test
+ 
+
+605
+00:10:09,600 --> 00:10:11,269
+this particular repo, I just have a test
+skill that I've added. You can see this
+
+606
+00:10:11,269 --> 00:10:11,279
+skill that I've added. You can see this
+ 
+
+607
+00:10:11,279 --> 00:10:14,389
+skill that I've added. You can see this
+is inside the deep agents repo and it's
+
+608
+00:10:14,389 --> 00:10:14,399
+is inside the deep agents repo and it's
+ 
+
+609
+00:10:14,399 --> 00:10:16,310
+is inside the deep agents repo and it's
+a project level skill. So the YAML front
+
+610
+00:10:16,310 --> 00:10:16,320
+a project level skill. So the YAML front
+ 
+
+611
+00:10:16,320 --> 00:10:17,509
+a project level skill. So the YAML front
+matter for all these skills at the
+
+612
+00:10:17,509 --> 00:10:17,519
+matter for all these skills at the
+ 
+
+613
+00:10:17,519 --> 00:10:18,870
+matter for all these skills at the
+global level and the project level will
+
+614
+00:10:18,870 --> 00:10:18,880
+global level and the project level will
+ 
+
+615
+00:10:18,880 --> 00:10:20,470
+global level and the project level will
+be loaded into the system prompt and the
+
+616
+00:10:20,470 --> 00:10:20,480
+be loaded into the system prompt and the
+ 
+
+617
+00:10:20,480 --> 00:10:22,150
+be loaded into the system prompt and the
+agent can decide which ones it needs to
+
+618
+00:10:22,150 --> 00:10:22,160
+agent can decide which ones it needs to
+ 
+
+619
+00:10:22,160 --> 00:10:24,389
+agent can decide which ones it needs to
+use. Again, we just saw it using this
+
+620
+00:10:24,389 --> 00:10:24,399
+use. Again, we just saw it using this
+ 
+
+621
+00:10:24,399 --> 00:10:26,150
+use. Again, we just saw it using this
+web research skill. We asked for a
+
+622
+00:10:26,150 --> 00:10:26,160
+web research skill. We asked for a
+ 
+
+623
+00:10:26,160 --> 00:10:28,550
+web research skill. We asked for a
+request related to web research and it
+
+624
+00:10:28,550 --> 00:10:28,560
+request related to web research and it
+ 
+
+625
+00:10:28,560 --> 00:10:30,790
+request related to web research and it
+followed the instructions in this skills
+
+626
+00:10:30,790 --> 00:10:30,800
+followed the instructions in this skills
+ 
+
+627
+00:10:30,800 --> 00:10:31,910
+followed the instructions in this skills
+directory and it followed the
+
+628
+00:10:31,910 --> 00:10:31,920
+directory and it followed the
+ 
+
+629
+00:10:31,920 --> 00:10:34,230
+directory and it followed the
+instructions in the skills.mmd file in
+
+630
+00:10:34,230 --> 00:10:34,240
+instructions in the skills.mmd file in
+ 
+
+631
+00:10:34,240 --> 00:10:35,430
+instructions in the skills.mmd file in
+this directory. If we want to see
+
+632
+00:10:35,430 --> 00:10:35,440
+this directory. If we want to see
+ 
+
+633
+00:10:35,440 --> 00:10:36,949
+this directory. If we want to see
+another in action, let me ask a question
+
+634
+00:10:36,949 --> 00:10:36,959
+another in action, let me ask a question
+ 
+
+635
+00:10:36,959 --> 00:10:39,030
+another in action, let me ask a question
+related to langraph. Create a langraph
+
+636
+00:10:39,030 --> 00:10:39,040
+related to langraph. Create a langraph
+ 
+
+637
+00:10:39,040 --> 00:10:40,790
+related to langraph. Create a langraph
+agent. Save it to agent.py. So I've
+
+638
+00:10:40,790 --> 00:10:40,800
+agent. Save it to agent.py. So I've
+ 
+
+639
+00:10:40,800 --> 00:10:42,710
+agent. Save it to agent.py. So I've
+added a skill called langraph docs. You
+
+640
+00:10:42,710 --> 00:10:42,720
+added a skill called langraph docs. You
+ 
+
+641
+00:10:42,720 --> 00:10:44,630
+added a skill called langraph docs. You
+can see here's that skill.mmd. The yaml
+
+642
+00:10:44,630 --> 00:10:44,640
+can see here's that skill.mmd. The yaml
+ 
+
+643
+00:10:44,640 --> 00:10:46,069
+can see here's that skill.mmd. The yaml
+front matter indicates use this skill
+
+644
+00:10:46,069 --> 00:10:46,079
+front matter indicates use this skill
+ 
+
+645
+00:10:46,079 --> 00:10:48,150
+front matter indicates use this skill
+for any request related to langraph to
+
+646
+00:10:48,150 --> 00:10:48,160
+for any request related to langraph to
+ 
+
+647
+00:10:48,160 --> 00:10:49,670
+for any request related to langraph to
+fetch relevant documentation to provide
+
+648
+00:10:49,670 --> 00:10:49,680
+fetch relevant documentation to provide
+ 
+
+649
+00:10:49,680 --> 00:10:51,269
+fetch relevant documentation to provide
+accurate up-to-date guidance. Down here,
+
+650
+00:10:51,269 --> 00:10:51,279
+accurate up-to-date guidance. Down here,
+ 
+
+651
+00:10:51,279 --> 00:10:52,710
+accurate up-to-date guidance. Down here,
+I basically give some instructions.
+
+652
+00:10:52,710 --> 00:10:52,720
+I basically give some instructions.
+ 
+
+653
+00:10:52,720 --> 00:10:54,870
+I basically give some instructions.
+First, use your fetch URL tool. Again, a
+
+654
+00:10:54,870 --> 00:10:54,880
+First, use your fetch URL tool. Again, a
+ 
+
+655
+00:10:54,880 --> 00:10:57,670
+First, use your fetch URL tool. Again, a
+built-in tool to the ad agent CLI. Read
+
+656
+00:10:57,670 --> 00:10:57,680
+built-in tool to the ad agent CLI. Read
+ 
+
+657
+00:10:57,680 --> 00:11:00,389
+built-in tool to the ad agent CLI. Read
+our LMS.ext file. Reflect on the
+
+658
+00:11:00,389 --> 00:11:00,399
+our LMS.ext file. Reflect on the
+ 
+
+659
+00:11:00,399 --> 00:11:02,790
+our LMS.ext file. Reflect on the
+request. Select a few different relevant
+
+660
+00:11:02,790 --> 00:11:02,800
+request. Select a few different relevant
+ 
+
+661
+00:11:02,800 --> 00:11:05,990
+request. Select a few different relevant
+URLs from this lm.ext. text to read,
+
+662
+00:11:05,990 --> 00:11:06,000
+URLs from this lm.ext. text to read,
+ 
+
+663
+00:11:06,000 --> 00:11:07,750
+URLs from this lm.ext. text to read,
+fetch them, and then use that to answer
+
+664
+00:11:07,750 --> 00:11:07,760
+fetch them, and then use that to answer
+ 
+
+665
+00:11:07,760 --> 00:11:09,670
+fetch them, and then use that to answer
+the question. You can open up this
+
+666
+00:11:09,670 --> 00:11:09,680
+the question. You can open up this
+ 
+
+667
+00:11:09,680 --> 00:11:11,590
+the question. You can open up this
+document and you can see there's just a
+
+668
+00:11:11,590 --> 00:11:11,600
+document and you can see there's just a
+ 
+
+669
+00:11:11,600 --> 00:11:13,750
+document and you can see there's just a
+list of documentation URLs and some
+
+670
+00:11:13,750 --> 00:11:13,760
+list of documentation URLs and some
+ 
+
+671
+00:11:13,760 --> 00:11:15,269
+list of documentation URLs and some
+little and a little bit of annotation
+
+672
+00:11:15,269 --> 00:11:15,279
+little and a little bit of annotation
+ 
+
+673
+00:11:15,279 --> 00:11:16,790
+little and a little bit of annotation
+about what's in each one. So, we can go
+
+674
+00:11:16,790 --> 00:11:16,800
+about what's in each one. So, we can go
+ 
+
+675
+00:11:16,800 --> 00:11:18,550
+about what's in each one. So, we can go
+back to our agent. You can see it read
+
+676
+00:11:18,550 --> 00:11:18,560
+back to our agent. You can see it read
+ 
+
+677
+00:11:18,560 --> 00:11:20,550
+back to our agent. You can see it read
+that skill.mmd file. That's great. So,
+
+678
+00:11:20,550 --> 00:11:20,560
+that skill.mmd file. That's great. So,
+ 
+
+679
+00:11:20,560 --> 00:11:22,310
+that skill.mmd file. That's great. So,
+it pulled in all those instructions.
+
+680
+00:11:22,310 --> 00:11:22,320
+it pulled in all those instructions.
+ 
+
+681
+00:11:22,320 --> 00:11:24,150
+it pulled in all those instructions.
+Now, it wants to read that element.ext
+
+682
+00:11:24,150 --> 00:11:24,160
+Now, it wants to read that element.ext
+ 
+
+683
+00:11:24,160 --> 00:11:25,670
+Now, it wants to read that element.ext
+file. That's great. I give it approval
+
+684
+00:11:25,670 --> 00:11:25,680
+file. That's great. I give it approval
+ 
+
+685
+00:11:25,680 --> 00:11:27,670
+file. That's great. I give it approval
+there. It reads that and it's going to
+
+686
+00:11:27,670 --> 00:11:27,680
+there. It reads that and it's going to
+ 
+
+687
+00:11:27,680 --> 00:11:29,030
+there. It reads that and it's going to
+it's going to reflect on that and then
+
+688
+00:11:29,030 --> 00:11:29,040
+it's going to reflect on that and then
+ 
+
+689
+00:11:29,040 --> 00:11:31,509
+it's going to reflect on that and then
+choose to read a few different specific
+
+690
+00:11:31,509 --> 00:11:31,519
+choose to read a few different specific
+ 
+
+691
+00:11:31,519 --> 00:11:33,509
+choose to read a few different specific
+documentation pages. That's fine. It's
+
+692
+00:11:33,509 --> 00:11:33,519
+documentation pages. That's fine. It's
+ 
+
+693
+00:11:33,519 --> 00:11:34,710
+documentation pages. That's fine. It's
+going to read the quick start, the
+
+694
+00:11:34,710 --> 00:11:34,720
+going to read the quick start, the
+ 
+
+695
+00:11:34,720 --> 00:11:37,269
+going to read the quick start, the
+overview. Good. I'll pull those in. It
+
+696
+00:11:37,269 --> 00:11:37,279
+overview. Good. I'll pull those in. It
+ 
+
+697
+00:11:37,279 --> 00:11:38,630
+overview. Good. I'll pull those in. It
+read the documentation. Now it's
+
+698
+00:11:38,630 --> 00:11:38,640
+read the documentation. Now it's
+ 
+
+699
+00:11:38,640 --> 00:11:40,550
+read the documentation. Now it's
+creating a file for me. This is cool.
+
+700
+00:11:40,550 --> 00:11:40,560
+creating a file for me. This is cool.
+ 
+
+701
+00:11:40,560 --> 00:11:43,350
+creating a file for me. This is cool.
+Called agent.py. And I approve that.
+
+702
+00:11:43,350 --> 00:11:43,360
+Called agent.py. And I approve that.
+ 
+
+703
+00:11:43,360 --> 00:11:44,470
+Called agent.py. And I approve that.
+Great. And it gives me a bunch of
+
+704
+00:11:44,470 --> 00:11:44,480
+Great. And it gives me a bunch of
+ 
+
+705
+00:11:44,480 --> 00:11:46,150
+Great. And it gives me a bunch of
+instructions. And we're done. So skills
+
+706
+00:11:46,150 --> 00:11:46,160
+instructions. And we're done. So skills
+ 
+
+707
+00:11:46,160 --> 00:11:47,750
+instructions. And we're done. So skills
+are a very easy way to expand the action
+
+708
+00:11:47,750 --> 00:11:47,760
+are a very easy way to expand the action
+ 
+
+709
+00:11:47,760 --> 00:11:49,590
+are a very easy way to expand the action
+space of agents. The key dependencies
+
+710
+00:11:49,590 --> 00:11:49,600
+space of agents. The key dependencies
+ 
+
+711
+00:11:49,600 --> 00:11:51,030
+space of agents. The key dependencies
+that you give your agent access to a
+
+712
+00:11:51,030 --> 00:11:51,040
+that you give your agent access to a
+ 
+
+713
+00:11:51,040 --> 00:11:54,790
+that you give your agent access to a
+file system. The deep agent CLI has one
+
+714
+00:11:54,790 --> 00:11:54,800
+file system. The deep agent CLI has one
+ 
+
+715
+00:11:54,800 --> 00:11:56,389
+file system. The deep agent CLI has one
+access to your local file system. So
+
+716
+00:11:56,389 --> 00:11:56,399
+access to your local file system. So
+ 
+
+717
+00:11:56,399 --> 00:11:58,069
+access to your local file system. So
+that's great just like cloud code. And
+
+718
+00:11:58,069 --> 00:11:58,079
+that's great just like cloud code. And
+ 
+
+719
+00:11:58,079 --> 00:11:59,590
+that's great just like cloud code. And
+two, it has a bunch of native tools
+
+720
+00:11:59,590 --> 00:11:59,600
+two, it has a bunch of native tools
+ 
+
+721
+00:11:59,600 --> 00:12:01,269
+two, it has a bunch of native tools
+built in allowing it to run bash
+
+722
+00:12:01,269 --> 00:12:01,279
+built in allowing it to run bash
+ 
+
+723
+00:12:01,279 --> 00:12:02,870
+built in allowing it to run bash
+commands, perform file manipulation,
+
+724
+00:12:02,870 --> 00:12:02,880
+commands, perform file manipulation,
+ 
+
+725
+00:12:02,880 --> 00:12:05,670
+commands, perform file manipulation,
+fetch URLs and so forth. So with those
+
+726
+00:12:05,670 --> 00:12:05,680
+fetch URLs and so forth. So with those
+ 
+
+727
+00:12:05,680 --> 00:12:07,670
+fetch URLs and so forth. So with those
+basic atomic tools, you can very easily
+
+728
+00:12:07,670 --> 00:12:07,680
+basic atomic tools, you can very easily
+ 
+
+729
+00:12:07,680 --> 00:12:09,430
+basic atomic tools, you can very easily
+create skills by creating a skills
+
+730
+00:12:09,430 --> 00:12:09,440
+create skills by creating a skills
+ 
+
+731
+00:12:09,440 --> 00:12:11,590
+create skills by creating a skills
+directory either at your global level or
+
+732
+00:12:11,590 --> 00:12:11,600
+directory either at your global level or
+ 
+
+733
+00:12:11,600 --> 00:12:13,430
+directory either at your global level or
+project level. And in that directory,
+
+734
+00:12:13,430 --> 00:12:13,440
+project level. And in that directory,
+ 
+
+735
+00:12:13,440 --> 00:12:15,750
+project level. And in that directory,
+just applying a skilled MD file properly
+
+736
+00:12:15,750 --> 00:12:15,760
+just applying a skilled MD file properly
+ 
+
+737
+00:12:15,760 --> 00:12:18,150
+just applying a skilled MD file properly
+formatted, which tells the agent what
+
+738
+00:12:18,150 --> 00:12:18,160
+formatted, which tells the agent what
+ 
+
+739
+00:12:18,160 --> 00:12:19,430
+formatted, which tells the agent what
+you want done. You can provide
+
+740
+00:12:19,430 --> 00:12:19,440
+you want done. You can provide
+ 
+
+741
+00:12:19,440 --> 00:12:20,790
+you want done. You can provide
+additional files. You can provide
+
+742
+00:12:20,790 --> 00:12:20,800
+additional files. You can provide
+ 
+
+743
+00:12:20,800 --> 00:12:23,190
+additional files. You can provide
+scripts and just give it instructions
+
+744
+00:12:23,190 --> 00:12:23,200
+scripts and just give it instructions
+ 
+
+745
+00:12:23,200 --> 00:12:25,750
+scripts and just give it instructions
+simply in markdown about what to do and
+
+746
+00:12:25,750 --> 00:12:25,760
+simply in markdown about what to do and
+ 
+
+747
+00:12:25,760 --> 00:12:27,110
+simply in markdown about what to do and
+it'll follow those instructions using it
+
+748
+00:12:27,110 --> 00:12:27,120
+it'll follow those instructions using it
+ 
+
+749
+00:12:27,120 --> 00:12:29,110
+it'll follow those instructions using it
+native tools. Very simple concept, a
+
+750
+00:12:29,110 --> 00:12:29,120
+native tools. Very simple concept, a
+ 
+
+751
+00:12:29,120 --> 00:12:30,710
+native tools. Very simple concept, a
+very nice way to expand the action space
+
+752
+00:12:30,710 --> 00:12:30,720
+very nice way to expand the action space
+ 
+
+753
+00:12:30,720 --> 00:12:32,710
+very nice way to expand the action space
+of your agent and doesn't require the
+
+754
+00:12:32,710 --> 00:12:32,720
+of your agent and doesn't require the
+ 
+
+755
+00:12:32,720 --> 00:12:34,470
+of your agent and doesn't require the
+complexities of tool calling. So
+
+756
+00:12:34,470 --> 00:12:34,480
+complexities of tool calling. So
+ 
+
+757
+00:12:34,480 --> 00:12:35,829
+complexities of tool calling. So
+hopefully this is a useful overview for
+
+758
+00:12:35,829 --> 00:12:35,839
+hopefully this is a useful overview for
+ 
+
+759
+00:12:35,839 --> 00:12:37,590
+hopefully this is a useful overview for
+skills and how they work and how we've
+
+760
+00:12:37,590 --> 00:12:37,600
+skills and how they work and how we've
+ 
+
+761
+00:12:37,600 --> 00:12:39,110
+skills and how they work and how we've
+implemented them and how we built them
+
+762
+00:12:39,110 --> 00:12:39,120
+implemented them and how we built them
+ 
+
+763
+00:12:39,120 --> 00:12:43,360
+implemented them and how we built them
+with the deep agent CLI. Thanks.
+

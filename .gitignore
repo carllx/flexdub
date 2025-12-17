@@ -1,0 +1,36 @@
+# Workspace media and large artifacts (avoid committing big binaries)
+
+# Videos
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.flv
+*.webm
+*.wmv
+
+# Audio
+*.wav
+*.mp3
+*.aac
+*.flac
+*.m4a
+
+# Generated intermediates
+*.tmp
+*.cache
+
+# Keep subtitles tracked
+!data/**/*.srt
+!data/**/*.vtt
+
+# OS/Editor noise
+.DS_Store
+.venv/
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
