@@ -4,12 +4,12 @@ import os
 import tempfile
 from typing import Optional
 
-from pyvideotrans.core.subtitle import read_srt, write_srt, apply_text_options, to_segments, from_segments, SRTItem
-from pyvideotrans.core.rebalance import rebalance_intervals
-from pyvideotrans.core.audio import concat_wavs, mux_audio_video, make_silence, media_duration_ms, detect_negative_ts
-from pyvideotrans.core.audio import extract_audio_track, write_sync_audit
-from pyvideotrans.pipelines.dubbing import build_audio_from_srt
-from pyvideotrans.core.lang import detect_language, recommended_voice
+from flexdub.core.subtitle import read_srt, write_srt, apply_text_options, to_segments, from_segments, SRTItem
+from flexdub.core.rebalance import rebalance_intervals
+from flexdub.core.audio import concat_wavs, mux_audio_video, make_silence, media_duration_ms, detect_negative_ts
+from flexdub.core.audio import extract_audio_track, write_sync_audit
+from flexdub.pipelines.dubbing import build_audio_from_srt
+from flexdub.core.lang import detect_language, recommended_voice
 
 
 def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
@@ -175,12 +175,12 @@ def main(argv: Optional[list] = None) -> int:
             display_srt = os.path.join(out_dir, base + ".display.srt")
             audio_srt = os.path.join(out_dir, base + ".audio.srt")
             if args.llm_dual_srt:
-                from pyvideotrans.core.subtitle import llm_generate_dual_srt as _llm_dual
+                from flexdub.core.subtitle import llm_generate_dual_srt as _llm_dual
                 d_items, a_items = _llm_dual(items)
                 write_srt(display_srt, d_items)
                 write_srt(audio_srt, a_items)
             else:
-                from pyvideotrans.core.subtitle import semantic_restructure as _semantic_restructure
+                from flexdub.core.subtitle import semantic_restructure as _semantic_restructure
                 write_srt(display_srt, items)
                 write_srt(audio_srt, _semantic_restructure(items))
         backend = args.backend
@@ -196,7 +196,7 @@ def main(argv: Optional[list] = None) -> int:
         
         if mode == "elastic-video":
             # Mode B: Elastic Video Pipeline
-            from pyvideotrans.pipelines.elastic_video import build_elastic_video_from_srt
+            from flexdub.pipelines.elastic_video import build_elastic_video_from_srt
             vmap = None
             if args.voice_map:
                 try:
@@ -225,9 +225,9 @@ def main(argv: Optional[list] = None) -> int:
             # Mode A: Elastic Audio Pipeline (original)
             use_clustered = args.clustered or args.auto_dual_srt
             if use_clustered:
-                from pyvideotrans.pipelines.dubbing import build_audio_from_srt_clustered as _build
+                from flexdub.pipelines.dubbing import build_audio_from_srt_clustered as _build
             else:
-                from pyvideotrans.pipelines.dubbing import build_audio_from_srt as _build
+                from flexdub.pipelines.dubbing import build_audio_from_srt as _build
             try:
                 if use_clustered:
                     vmap = None
@@ -256,8 +256,8 @@ def main(argv: Optional[list] = None) -> int:
         
         if mode == "elastic-video":
             # Mode B: Concatenate video segments and merge with audio
-            from pyvideotrans.pipelines.elastic_video import concatenate_video_segments, generate_mode_b_subtitle
-            from pyvideotrans.core.subtitle import detect_gaps
+            from flexdub.pipelines.elastic_video import concatenate_video_segments, generate_mode_b_subtitle
+            from flexdub.core.subtitle import detect_gaps
             
             tmp_video = tempfile.mktemp(suffix=".mp4")
             concatenate_video_segments(video_segments, tmp_video)
@@ -378,7 +378,7 @@ def main(argv: Optional[list] = None) -> int:
             mux_audio_video(args.video_path, tmp_mix, out, subtitle_path=sub_path, subtitle_lang=args.subtitle_lang, robust_ts=(args.robust_ts or auto_robust))
         return 0
     if args.cmd == "json_merge":
-        from pyvideotrans.core.io import read_segments_json
+        from flexdub.core.io import read_segments_json
         segs = read_segments_json(args.segments_json, source=args.source)
         items = from_segments(segs)
         orig_texts = [i.text for i in items]
@@ -396,9 +396,9 @@ def main(argv: Optional[list] = None) -> int:
         if backend == "macos_say" or args.no_fallback:
             jobs = 1
         if args.clustered:
-            from pyvideotrans.pipelines.dubbing import build_audio_from_srt_clustered as _build2
+            from flexdub.pipelines.dubbing import build_audio_from_srt_clustered as _build2
         else:
-            from pyvideotrans.pipelines.dubbing import build_audio_from_srt as _build2
+            from flexdub.pipelines.dubbing import build_audio_from_srt as _build2
         try:
             if args.clustered:
                 vmap2 = None
@@ -506,7 +506,7 @@ def main(argv: Optional[list] = None) -> int:
             print(args.save)
         return 0
     if args.cmd == "json_audit":
-        from pyvideotrans.core.io import read_segments_json, audit_rows_from_segments
+        from flexdub.core.io import read_segments_json, audit_rows_from_segments
         segs = read_segments_json(args.segments_json, source=args.source)
         rows = audit_rows_from_segments(segs)
         bad = [r for r in rows if r[1] < args.min_cpm or r[1] > args.max_cpm]
@@ -611,12 +611,12 @@ def main(argv: Optional[list] = None) -> int:
                 items = [SRTItem(i.start_ms, i.end_ms, i.text) for i in items]
                 if args.auto_dual_srt:
                     if args.llm_dual_srt:
-                        from pyvideotrans.core.subtitle import llm_generate_dual_srt as _llm_dual
+                        from flexdub.core.subtitle import llm_generate_dual_srt as _llm_dual
                         d_items, a_items = _llm_dual(items)
                         write_srt(display_srt, d_items)
                         write_srt(audio_srt, a_items)
                     else:
-                        from pyvideotrans.core.subtitle import semantic_restructure as _semantic_restructure
+                        from flexdub.core.subtitle import semantic_restructure as _semantic_restructure
                         write_srt(display_srt, items)
                         write_srt(audio_srt, _semantic_restructure(items))
                     log.write("[DUAL] display.srt & audio.srt written\n")
@@ -658,7 +658,7 @@ def main(argv: Optional[list] = None) -> int:
                 try:
                     use_clustered = args.clustered or args.auto_dual_srt
                     if use_clustered:
-                        from pyvideotrans.pipelines.dubbing import build_audio_from_srt_clustered as _build3
+                        from flexdub.pipelines.dubbing import build_audio_from_srt_clustered as _build3
                         vmap3 = None
                         vmap_path = args.voice_map or os.path.join(pdir, "voice_map.json")
                         if os.path.exists(vmap_path):
@@ -669,7 +669,7 @@ def main(argv: Optional[list] = None) -> int:
                                 vmap3 = None
                         wavs = asyncio.run(_build3(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress, smart_split=args.smart_split, voice_map=vmap3))
                     else:
-                        from pyvideotrans.pipelines.dubbing import build_audio_from_srt as _build3
+                        from flexdub.pipelines.dubbing import build_audio_from_srt as _build3
                         wavs = asyncio.run(_build3(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
                 except Exception as e:
                     log.write(f"[ERROR] synth failed: {e}\n")
@@ -786,7 +786,7 @@ def main(argv: Optional[list] = None) -> int:
     if args.cmd == "rewrite":
         items = read_srt(args.srt_path)
         items = [SRTItem(i.start_ms, i.end_ms, apply_text_options(i.text, args.keep_brackets, args.strip_meta, args.strip_noise)) for i in items]
-        from pyvideotrans.core.subtitle import semantic_restructure
+        from flexdub.core.subtitle import semantic_restructure
         items2 = semantic_restructure(items, max_chars=args.max_chars, max_duration_ms=args.max_duration)
         out = args.output
         if out is None:
@@ -799,7 +799,7 @@ def main(argv: Optional[list] = None) -> int:
     if args.cmd == "fluency":
         items = read_srt(args.srt_path)
         items = [SRTItem(i.start_ms, i.end_ms, i.text) for i in items]
-        from pyvideotrans.core.subtitle import fluency_metrics
+        from flexdub.core.subtitle import fluency_metrics
         score, breaks = fluency_metrics(items)
         print(f"TOTAL={score['total']}")
         print(f"TERMINAL_END_RATIO={score['terminal_end_ratio']:.3f}")
@@ -814,7 +814,7 @@ def main(argv: Optional[list] = None) -> int:
             print(args.save)
         return 0
     if args.cmd == "qa":
-        from pyvideotrans.core.qa import run_qa_checks
+        from flexdub.core.qa import run_qa_checks
         report = run_qa_checks(
             args.srt_path,
             voice_map_path=args.voice_map,

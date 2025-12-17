@@ -3,7 +3,7 @@
 ## 1. 修复 Mode B 音视频同步
 
 - [x] 1.1 实现间隙检测功能
-  - 在 `pyvideotrans/core/subtitle.py` 中添加 `detect_gaps()` 函数
+  - 在 `flexdub/core/subtitle.py` 中添加 `detect_gaps()` 函数
   - 检测字幕片段之间 > 100ms 的间隙
   - 返回间隙列表，包含 start_ms, end_ms, duration_ms, prev_index, next_index
   - _Requirements: 5.1, 5.5_
@@ -13,7 +13,7 @@
   - **Validates: Requirements 5.1, 5.5**
 
 - [x] 1.3 修改视频片段处理逻辑
-  - 修改 `pyvideotrans/pipelines/elastic_video.py` 中的 `build_elastic_video_from_srt()` 函数
+  - 修改 `flexdub/pipelines/elastic_video.py` 中的 `build_elastic_video_from_srt()` 函数
   - 添加间隙检测和处理逻辑
   - 间隙对应的视频片段保持原始时长不拉伸
   - 生成间隙对应的静音音频
@@ -60,7 +60,7 @@
 ## 2. 实现 Mode B 自动生成新字幕
 
 - [x] 2.1 实现新字幕生成函数
-  - 在 `pyvideotrans/pipelines/elastic_video.py` 中添加 `generate_mode_b_subtitle()` 函数
+  - 在 `flexdub/pipelines/elastic_video.py` 中添加 `generate_mode_b_subtitle()` 函数
   - 使用累计 TTS 时长计算新时间轴
   - 支持保留或移除说话人标签
   - _Requirements: 3.1, 3.2, 3.6_
@@ -74,7 +74,7 @@
   - **Validates: Requirements 3.6**
 
 - [x] 2.4 集成新字幕生成到 CLI
-  - 修改 `pyvideotrans/cli/__main__.py` 中的 Mode B 处理逻辑
+  - 修改 `flexdub/cli/__main__.py` 中的 Mode B 处理逻辑
   - 自动生成 `*.mode_b.srt` 文件
   - 支持 `--embed-subtitle` 参数嵌入新字幕
   - _Requirements: 3.3, 3.4, 3.5_
@@ -85,7 +85,7 @@
 ## 3. 添加 Agent Manual v2 QA 环节
 
 - [x] 3.1 实现 QA 检查函数
-  - 在 `pyvideotrans/core/qa.py` 中创建新模块
+  - 在 `flexdub/core/qa.py` 中创建新模块
   - 实现 `check_speaker_coverage()` 函数
   - 实现 `check_timeline_completeness()` 函数
   - 实现 `check_block_limits()` 函数
@@ -107,7 +107,7 @@
   - _Requirements: 2.1, 2.6_
 
 - [x] 3.5 添加 QA 命令到 CLI
-  - 在 `pyvideotrans/cli/__main__.py` 中添加 `qa` 子命令
+  - 在 `flexdub/cli/__main__.py` 中添加 `qa` 子命令
   - 支持 `--srt-path` 和 `--voice-map` 参数
   - 输出检查结果和报告
   - _Requirements: 2.1, 2.2_

@@ -27,10 +27,10 @@ from typing import List, Tuple, Optional, Dict
 
 from tqdm import tqdm
 
-from pyvideotrans.core.subtitle import SRTItem, Gap, SegmentInfo, SyncDiagnostics, extract_speaker, detect_gaps
-from pyvideotrans.core.audio import audio_duration_ms, make_silence
-from pyvideotrans.backends.tts.edge import EdgeTTSBackend
-from pyvideotrans.backends.tts.say import SayBackend
+from flexdub.core.subtitle import SRTItem, Gap, SegmentInfo, SyncDiagnostics, extract_speaker, detect_gaps
+from flexdub.core.audio import audio_duration_ms, make_silence
+from flexdub.backends.tts.edge import EdgeTTSBackend
+from flexdub.backends.tts.say import SayBackend
 
 
 def _get_tts_cache_path(cache_dir: str, text: str, voice: str, idx: int) -> str:
@@ -470,7 +470,7 @@ def generate_mode_b_subtitle(
     Returns:
         生成的字幕文件路径
     """
-    from pyvideotrans.core.subtitle import write_srt
+    from flexdub.core.subtitle import write_srt
     import re
     
     # Build gap map for quick lookup

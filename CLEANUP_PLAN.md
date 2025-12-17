@@ -1,4 +1,4 @@
-# PyVideoTrans 项目清理计划
+# flexdub 项目清理计划
 
 **创建日期：** 2024-11-30  
 **参考文档：** agent_manual_v2.md
@@ -116,7 +116,7 @@ plans/
 - `.gitignore` - Git 忽略规则
 
 ### 核心代码
-- `pyvideotrans/` - 主包（全部保留）
+- `flexdub/` - 主包（全部保留）
 - `tests/` - 测试文件（全部保留）
 - `scripts/` - 实用脚本（保留有价值的）
 

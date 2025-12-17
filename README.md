@@ -30,7 +30,7 @@ Compress audio to fit video timing. Best for fixed-duration videos.
 压缩音频以适配视频时长。适合时长固定的视频。
 
 ```bash
-python -m pyvideotrans merge \
+python -m flexdub merge \
   "/path/to/subtitle.srt" \
   "/path/to/video.mp4" \
   -o "/path/to/output.mp4" \
@@ -47,7 +47,7 @@ Stretch video to fit natural-speed audio. Best for quality-focused content.
 拉伸视频以适配自然语速音频。适合注重质量的内容。
 
 ```bash
-python -m pyvideotrans merge \
+python -m flexdub merge \
   "/path/to/subtitle.srt" \
   "/path/to/video.mp4" \
   -o "/path/to/output.mp4" \
@@ -62,7 +62,7 @@ python -m pyvideotrans merge \
 **See [ELASTIC_MODES.md](ELASTIC_MODES.md) for detailed comparison.**
 - Merge JSON segments (WhisperX/Gemini3):
 ```bash
-python -m pyvideotrans json_merge \
+python -m flexdub json_merge \
   "/path/to/segments.json" \
   "/path/to/video.mp4" \
   -o "/path/to/output.mp4" \
@@ -115,11 +115,11 @@ python -m pyvideotrans json_merge \
 - See `CHANGELOG.md` for important changes.
 - Validate project folder and generate validation.json:
 ```bash
-python -m pyvideotrans validate_project "data/input/<ProjectName>"
+python -m flexdub validate_project "data/input/<ProjectName>"
 ```
 - Project end-to-end dubbing with auto language/voice:
 ```bash
-python -m pyvideotrans project_merge \
+python -m flexdub project_merge \
   "data/input/<ProjectName>" \
   --backend edge_tts \
   --auto-voice \

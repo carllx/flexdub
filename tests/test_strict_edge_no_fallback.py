@@ -1,5 +1,5 @@
 import os
-from pyvideotrans.cli.__main__ import main
+from flexdub.cli.__main__ import main
 
 
 def _write_srt(path: str) -> None:
@@ -18,7 +18,7 @@ async def _raise_async(*args, **kwargs):
 def test_strict_edge_no_fallback(monkeypatch, tmp_path):
     srt_path = os.path.join(tmp_path, "a.srt")
     _write_srt(srt_path)
-    from pyvideotrans.backends.tts.edge import EdgeTTSBackend
+    from flexdub.backends.tts.edge import EdgeTTSBackend
     monkeypatch.setattr(EdgeTTSBackend, "synthesize", _raise_async)
     rc = main([
         "merge",

@@ -8,7 +8,7 @@ import urllib.error
 
 import srt
 
-from pyvideotrans.core.rebalance import Segment
+from flexdub.core.rebalance import Segment
 
 
 @dataclass
@@ -346,10 +346,10 @@ def _extract_srt_blocks(text: str) -> Tuple[Optional[str], Optional[str]]:
 
 
 def llm_generate_dual_srt(items: List[SRTItem]) -> Tuple[List[SRTItem], List[SRTItem]]:
-    provider = os.environ.get("PYVIDEOTRANS_LLM_PROVIDER", "openai")
-    api_key = os.environ.get("PYVIDEOTRANS_LLM_API_KEY", "")
-    base_url = os.environ.get("PYVIDEOTRANS_LLM_BASE_URL", "")
-    model = os.environ.get("PYVIDEOTRANS_LLM_MODEL", "gpt-4o-mini")
+    provider = os.environ.get("flexdub_LLM_PROVIDER", "openai")
+    api_key = os.environ.get("flexdub_LLM_API_KEY", "")
+    base_url = os.environ.get("flexdub_LLM_BASE_URL", "")
+    model = os.environ.get("flexdub_LLM_MODEL", "gpt-4o-mini")
     if not api_key:
         return items, semantic_restructure(items)
     srt_text = compose_srt(items)

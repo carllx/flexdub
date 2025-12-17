@@ -1,6 +1,6 @@
 import pytest
 
-from pyvideotrans.core.rebalance import Segment, rebalance_intervals
+from flexdub.core.rebalance import Segment, rebalance_intervals
 
 
 def test_rebalance_bidirectional_borrowing():

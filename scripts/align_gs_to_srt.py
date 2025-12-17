@@ -16,7 +16,7 @@ from typing import List, Tuple, Optional
 
 # 添加项目路径
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from pyvideotrans.core.subtitle import SRTItem, read_srt, write_srt
+from flexdub.core.subtitle import SRTItem, read_srt, write_srt
 
 
 @dataclass

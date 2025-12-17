@@ -1,6 +1,6 @@
 import os
 import tempfile
-from pyvideotrans.cli.__main__ import main
+from flexdub.cli.__main__ import main
 
 SRT_SAMPLE = """1\n00:00:01,000 --> 00:00:03,000\n[Intro] Hello * world\n\n2\n00:00:03,500 --> 00:00:05,000\nMeta: `Test` Content\n"""
 

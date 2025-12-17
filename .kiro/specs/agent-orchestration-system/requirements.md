@@ -1,8 +1,8 @@
-# Requirements Document: Agent Orchestration System for PyVideoTrans
+# Requirements Document: Agent Orchestration System for flexdub
 
 ## Introduction
 
-This specification defines an AI agent system that orchestrates the PyVideoTrans dubbing pipeline. The agent will guide users through a structured workflow based on decision matrices, enforce text immutability principles, and manage multi-stage processing from semantic restructuring through final video output.
+This specification defines an AI agent system that orchestrates the flexdub dubbing pipeline. The agent will guide users through a structured workflow based on decision matrices, enforce text immutability principles, and manage multi-stage processing from semantic restructuring through final video output.
 
 ## Glossary
 

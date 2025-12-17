@@ -13,7 +13,7 @@ from typing import List, Optional, Tuple
 import json
 import os
 
-from pyvideotrans.core.subtitle import SRTItem, read_srt, extract_speaker
+from flexdub.core.subtitle import SRTItem, read_srt, extract_speaker
 
 
 @dataclass

@@ -1,7 +1,7 @@
 import os
 import tempfile
 import pytest
-from pyvideotrans.core.subtitle import read_srt
+from flexdub.core.subtitle import read_srt
 
 def test_invalid_srt_raises(tmp_path):
     p = os.path.join(tmp_path, "bad.srt")

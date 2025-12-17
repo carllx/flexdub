@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 import soundfile as sf
 
-from pyvideotrans.core.audio import remove_silence as _remove_silence, time_stretch_rubberband as _time_stretch_rubberband, audio_duration_ms as _audio_duration_ms
+from flexdub.core.audio import remove_silence as _remove_silence, time_stretch_rubberband as _time_stretch_rubberband, audio_duration_ms as _audio_duration_ms
 
 
 def _write_wav(path: str, seconds: float, sr: int = 16000, tone: float = 440.0, leading_silence: float = 0.5):

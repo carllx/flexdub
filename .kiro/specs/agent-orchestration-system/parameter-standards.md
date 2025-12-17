@@ -1,6 +1,6 @@
 # Parameter Standards - Single Source of Truth
 
-本文档定义 PyVideoTrans 的**权威参数标准**，所有文档必须遵循此规范。
+本文档定义 flexdub 的**权威参数标准**，所有文档必须遵循此规范。
 
 ## 📌 核心原则
 
@@ -150,7 +150,7 @@ grep -r "max-shift" agent_manual.md | grep -v "1000"
 ```
 
 ### 手动验证
-1. 运行 `python -m pyvideotrans merge --help` 查看实际默认值
+1. 运行 `python -m flexdub merge --help` 查看实际默认值
 2. 对比文档中的所有参数说明
 3. 确保示例命令可执行
 
@@ -168,4 +168,4 @@ grep -r "max-shift" agent_manual.md | grep -v "1000"
 
 - [agent_manual.md](../../agent_manual.md) - Agent 操作手册
 - [requirements.md](./requirements.md) - 需求规范
-- [CLI 源码](../../pyvideotrans/cli/__main__.py) - 权威参数定义
+- [CLI 源码](../../flexdub/cli/__main__.py) - 权威参数定义

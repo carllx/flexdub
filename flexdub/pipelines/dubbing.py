@@ -4,10 +4,10 @@ from typing import List, Optional, Tuple, Dict
 
 from tqdm import tqdm
 
-from pyvideotrans.core.audio import remove_silence, audio_duration_ms, pad_silence, time_stretch_rubberband, split_wav_by_durations, split_wav_by_durations_smart
-from pyvideotrans.core.subtitle import SRTItem, extract_speaker
-from pyvideotrans.backends.tts.edge import EdgeTTSBackend
-from pyvideotrans.backends.tts.say import SayBackend
+from flexdub.core.audio import remove_silence, audio_duration_ms, pad_silence, time_stretch_rubberband, split_wav_by_durations, split_wav_by_durations_smart
+from flexdub.core.subtitle import SRTItem, extract_speaker
+from flexdub.backends.tts.edge import EdgeTTSBackend
+from flexdub.backends.tts.say import SayBackend
 
 
 async def _synthesize_segment(text: str, voice: str, backend: str, ar: int) -> str:

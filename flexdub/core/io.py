@@ -1,8 +1,8 @@
 import json
 from typing import List, Dict, Any, Tuple
 
-from pyvideotrans.core.rebalance import Segment
-from pyvideotrans.core.adapters import segments_from_whisperx, segments_from_gemini, segments_from_dicts
+from flexdub.core.rebalance import Segment
+from flexdub.core.adapters import segments_from_whisperx, segments_from_gemini, segments_from_dicts
 
 
 def read_segments_json(path: str, source: str = "auto") -> List[Segment]:

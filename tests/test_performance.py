@@ -4,7 +4,7 @@ import tempfile
 import numpy as np
 import soundfile as sf
 
-from pyvideotrans.core.audio import time_stretch_rubberband as _time_stretch_rubberband
+from flexdub.core.audio import time_stretch_rubberband as _time_stretch_rubberband
 
 
 def _write_wav(path: str, seconds: float, sr: int = 16000, tone: float = 440.0):

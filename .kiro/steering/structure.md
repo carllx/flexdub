@@ -3,7 +3,7 @@
 ## Directory Layout
 
 ```
-pyvideotrans/           # Main package (flexdub)
+flexdub/           # Main package (flexdub)
 ├── __init__.py
 ├── __main__.py
 ├── cli/                # CLI entrypoints
@@ -36,18 +36,18 @@ scripts/                # Utility scripts
 
 ## Key Modules
 
-### CLI (`pyvideotrans/cli/__main__.py`)
+### CLI (`flexdub/cli/__main__.py`)
 - Entry point for all commands
 - Enforces text immutability (non-rewrite stages)
 - Handles fallback logic and parameter validation
 
-### Core Algorithms (`pyvideotrans/core/`)
+### Core Algorithms (`flexdub/core/`)
 - `subtitle.py`: SRT parsing, semantic restructure, LLM dual-track generation
 - `rebalance.py`: CPM-based timeline optimization with borrowing and panic mode
 - `audio.py`: Elastic audio pipeline (silence removal, stretch/pad, concat, mux)
 - `lang.py`: Language detection and voice recommendation
 
-### Pipelines (`pyvideotrans/pipelines/dubbing.py`)
+### Pipelines (`flexdub/pipelines/dubbing.py`)
 - `build_audio_from_srt`: Per-segment TTS synthesis
 - `build_audio_from_srt_clustered`: Clustered synthesis with micro-splitting
 

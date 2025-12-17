@@ -2,8 +2,8 @@ import os
 import numpy as np
 import soundfile as sf
 
-from pyvideotrans.cli import __main__ as cli_main
-from pyvideotrans.cli.__main__ import main
+from flexdub.cli import __main__ as cli_main
+from flexdub.cli.__main__ import main
 
 
 def _write_srt(path: str) -> None:
@@ -33,7 +33,7 @@ def test_auto_robust_ts_injection(monkeypatch, tmp_path):
             f.write("ok")
 
     monkeypatch.setattr(cli_main, "mux_audio_video", _fake_mux)
-    import pyvideotrans.pipelines.dubbing as dubbing
+    import flexdub.pipelines.dubbing as dubbing
     monkeypatch.setattr(dubbing, "build_audio_from_srt", _fake_build)
 
     rc = main([

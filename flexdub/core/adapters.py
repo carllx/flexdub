@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 
-from pyvideotrans.core.rebalance import Segment
+from flexdub.core.rebalance import Segment
 
 
 def segments_from_whisperx(items: List[Dict[str, Any]]) -> List[Segment]:

@@ -19,4 +19,4 @@ tts = ["edge-tts"]
 stretch = ["pyrubberband"]
 
 [project.scripts]
-flexdub = "pyvideotrans.cli.__main__:main"
+flexdub = "flexdub.cli.__main__:main"

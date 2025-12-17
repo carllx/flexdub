@@ -1,4 +1,4 @@
-# PyVideoTrans Agent 操作手册 v2.4
+# flexdub Agent 操作手册 v2.4
 
 **文档版本：** v2.4.1  
 **代码版本：** v2.0.0  
@@ -27,7 +27,7 @@
 
 ### 1.1 角色定位
 
-PyVideoTrans Agent 是端到端配音管线的**中央协调器**，负责：
+flexdub Agent 是端到端配音管线的**中央协调器**，负责：
 
 - **语义重构**：提升字幕的 TTS 流畅度和可读性
 - **时间轴优化**：基于 CPM 的智能平衡
@@ -94,16 +94,16 @@ if after_texts != orig_texts:
 ❌ **错误：** 在 `rebalance` 命令中使用 `--strip-meta`
 ```bash
 # 这会导致错误，因为 strip-meta 会修改文本
-python -m pyvideotrans rebalance video.srt --strip-meta
+python -m flexdub rebalance video.srt --strip-meta
 ```
 
 ✅ **正确：** 先用 `rewrite` 清理，再 `rebalance`
 ```bash
 # 1. LLM 阶段：清理文本
-python -m pyvideotrans rewrite video.srt --strip-meta -o video.clean.srt
+python -m flexdub rewrite video.srt --strip-meta -o video.clean.srt
 
 # 2. Script 阶段：优化时间轴
-python -m pyvideotrans rebalance video.clean.srt
+python -m flexdub rebalance video.clean.srt
 ```
 
 ---
@@ -144,10 +144,10 @@ END IF
 
 **配置 LLM（可选）：**
 ```bash
-export PYVIDEOTRANS_LLM_PROVIDER="openai"
-export PYVIDEOTRANS_LLM_API_KEY="sk-..."
-export PYVIDEOTRANS_LLM_BASE_URL="https://api.openai.com/v1"
-export PYVIDEOTRANS_LLM_MODEL="gpt-4o-mini"
+export flexdub_LLM_PROVIDER="openai"
+export flexdub_LLM_API_KEY="sk-..."
+export flexdub_LLM_BASE_URL="https://api.openai.com/v1"
+export flexdub_LLM_MODEL="gpt-4o-mini"
 ```
 
 
@@ -245,7 +245,7 @@ Agent 生成 SRT → 直接告诉用户完成
 Agent 生成 SRT → 自动执行 QA 检查 → 修复问题 → 告诉用户完成
 ```
 
-**规则：生成任何 SRT 文件后，Agent 必须自动执行 `python -m pyvideotrans qa` 命令，无需等待用户请求。**
+**规则：生成任何 SRT 文件后，Agent 必须自动执行 `python -m flexdub qa` 命令，无需等待用户请求。**
 
 #### ⚠️ Agent 语义重构强制行为
 
@@ -566,7 +566,7 @@ python -c "import srt; srt.parse(open('semantic_fixed.srt').read())"
 grep -E "Blender|Maya|UV Editor" semantic_fixed.srt
 
 # 检查单块限制
-python -m pyvideotrans audit semantic_fixed.srt --max-chars 250
+python -m flexdub audit semantic_fixed.srt --max-chars 250
 ```
 
 ---
@@ -812,7 +812,7 @@ I think was next before yeah I think so and it just got so much better
 
 ```bash
 # 执行 QA 检查
-python -m pyvideotrans qa semantic_fixed.srt --voice-map voice_map.json
+python -m flexdub qa semantic_fixed.srt --voice-map voice_map.json
 
 # 输出示例
 [QA] SRT Valid: True
@@ -849,7 +849,7 @@ ALL PASSED = False →  必须修正问题后重新检查
 ```
 Agent 工作流程：
 1. 生成 SRT 文件（如 BMAD_Method.audio.srt）
-2. 【自动】执行 QA 检查：python -m pyvideotrans qa <srt_file>
+2. 【自动】执行 QA 检查：python -m flexdub qa <srt_file>
 3. 【自动】检查结果，如有问题则修复
 4. 【自动】重新执行 QA 直到 ALL PASSED = True
 5. 向用户报告完成状态
@@ -872,14 +872,14 @@ Agent 工作流程：
    - 字符超限 → 拆分过长的片段
    - 时长超限 → 调整时间轴或拆分片段
    - voice_map 无效 → 修正 JSON 格式或添加 DEFAULT
-3. **重新检查**：再次运行 `python -m pyvideotrans qa`
+3. **重新检查**：再次运行 `python -m flexdub qa`
 4. **循环直到通过**：ALL PASSED = True
 
 #### QA 报告输出
 
 ```bash
 # 输出 QA 报告到文件
-python -m pyvideotrans qa semantic_fixed.srt --voice-map voice_map.json -o qa_report.json
+python -m flexdub qa semantic_fixed.srt --voice-map voice_map.json -o qa_report.json
 ```
 
 ---
@@ -1130,7 +1130,7 @@ Python 脚本（`rebalance` 命令）
 
 **常规场景：**
 ```bash
-python -m pyvideotrans rebalance semantic_fixed.srt \
+python -m flexdub rebalance semantic_fixed.srt \
   --target-cpm 180 \
   --panic-cpm 300 \
   --max-shift 1000 \
@@ -1139,7 +1139,7 @@ python -m pyvideotrans rebalance semantic_fixed.srt \
 
 **高密度字幕（CPM ≥ 900）：**
 ```bash
-python -m pyvideotrans rebalance semantic_fixed.srt \
+python -m flexdub rebalance semantic_fixed.srt \
   --target-cpm 160 \
   --panic-cpm 300 \
   --max-shift 6000 \
@@ -1226,7 +1226,7 @@ END IF
 
 **Mode A - 单人场景：**
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --ar 48000 \
@@ -1237,7 +1237,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 
 **Mode A - 多人场景：**
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -1249,7 +1249,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 
 **Mode B - 单人场景（自然语速）：**
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --ar 48000 \
@@ -1259,7 +1259,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 
 **Mode B - 多人场景（自然语速）：**
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -1300,7 +1300,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 
 ```bash
 # 启用同步诊断
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --mode elastic-video \
@@ -1365,7 +1365,7 @@ Segment 91: abnormal stretch ratio 0.309  # 拉伸比例异常警告
 
 ```bash
 # 处理第 1 段
-python -m pyvideotrans merge \
+python -m flexdub merge \
   "data/input/ProjectName/chunks/part01.srt" \
   "data/input/ProjectName/video.mp4" \
   --backend edge_tts \
@@ -1377,7 +1377,7 @@ python -m pyvideotrans merge \
   -o "data/output/ProjectName/mode_b_part01.mp4"
 
 # 处理第 2 段
-python -m pyvideotrans merge \
+python -m flexdub merge \
   "data/input/ProjectName/chunks/part02.srt" \
   "data/input/ProjectName/video.mp4" \
   --backend edge_tts \
@@ -1416,7 +1416,7 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "final_output.mp4"
 
 # 检查音视频同步
-python -m pyvideotrans sync_audit "final_output.mp4" \
+python -m flexdub sync_audit "final_output.mp4" \
   "data/input/ProjectName/semantic_fixed.srt"
 ```
 
@@ -1499,7 +1499,7 @@ Python 脚本（`audit`, `sync_audit` 命令）
 检查字幕 CPM 是否在合理范围内。
 
 ```bash
-python -m pyvideotrans audit semantic_fixed.srt \
+python -m flexdub audit semantic_fixed.srt \
   --min-cpm 180 \
   --max-cpm 220 \
   --save cpm_report.csv
@@ -1520,7 +1520,7 @@ python -m pyvideotrans audit semantic_fixed.srt \
 检查音频波形起点与字幕时间戳的同步性。
 
 ```bash
-python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.srt \
+python -m flexdub sync_audit video.dub.mp4 semantic_fixed.srt \
   --ar 48000 \
   --win-ms 20 \
   -o sync_report/
@@ -1611,7 +1611,7 @@ def detect_multi_speaker(srt_items):
 #### 代码解析逻辑
 
 ```python
-# pyvideotrans/core/subtitle.py
+# flexdub/core/subtitle.py
 def extract_speaker(text: str) -> Tuple[Optional[str], str]:
     """
     提取说话人标签和清理后的文本
@@ -1661,7 +1661,7 @@ def extract_speaker(text: str) -> Tuple[Optional[str], str]:
 #### 使用方式
 
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -1731,7 +1731,7 @@ grep -oE "\[Speaker:[^\]]+\]" semantic_fixed.srt | sort | uniq -c
 **Step 4: 执行合成**
 
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -1748,7 +1748,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 grep "SPEAKER_MAP" process.log
 
 # 同步审计
-python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.srt
+python -m flexdub sync_audit video.dub.mp4 semantic_fixed.srt
 ```
 
 
@@ -1768,15 +1768,15 @@ python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.srt
 # 输出：semantic_fixed.srt
 
 # 2. 项目校验
-python -m pyvideotrans validate_project "data/input/ProjectName"
+python -m flexdub validate_project "data/input/ProjectName"
 
 # 3. CPM 审计（Mode A 要求 ≤300）
-python -m pyvideotrans audit semantic_fixed.srt \
+python -m flexdub audit semantic_fixed.srt \
   --min-cpm 180 --max-cpm 300 \
   --save cpm_report.csv
 
 # 4. 端到端处理（使用 --clustered 自动跳过 rebalance）
-python -m pyvideotrans project_merge "data/input/ProjectName" \
+python -m flexdub project_merge "data/input/ProjectName" \
   --backend edge_tts \
   --auto-voice \
   --target-lang zh \
@@ -1787,7 +1787,7 @@ python -m pyvideotrans project_merge "data/input/ProjectName" \
   --subtitle-lang zh
 
 # 5. 同步审计
-python -m pyvideotrans sync_audit \
+python -m flexdub sync_audit \
   "data/output/ProjectName/ProjectName.dub.mp4" \
   "data/input/ProjectName/semantic_fixed.srt" \
   --ar 48000
@@ -1827,7 +1827,7 @@ EOF
 grep -E "\[Speaker:" semantic_fixed.srt | head -5
 
 # 4. 执行合成
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -1841,7 +1841,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 grep "SPEAKER_MAP" process.log
 
 # 6. 同步审计
-python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.srt
+python -m flexdub sync_audit video.dub.mp4 semantic_fixed.srt
 ```
 
 **关键参数：**
@@ -1866,21 +1866,21 @@ python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.srt
 # 输出：semantic_fixed.srt
 
 # 或使用 rewrite 命令
-python -m pyvideotrans rewrite video.srt \
+python -m flexdub rewrite video.srt \
   --max-chars 200 \
   --max-duration 12000 \
   --strip-meta \
   -o semantic_fixed.srt
 
 # 2. 再平衡：扩大窗口
-python -m pyvideotrans rebalance semantic_fixed.srt \
+python -m flexdub rebalance semantic_fixed.srt \
   --target-cpm 160 \
   --panic-cpm 300 \
   --max-shift 6000 \
   -o semantic_fixed.rebalance.srt
 
 # 3. 合成
-python -m pyvideotrans merge semantic_fixed.rebalance.srt video.mp4 \
+python -m flexdub merge semantic_fixed.rebalance.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --ar 48000 \
@@ -1888,7 +1888,7 @@ python -m pyvideotrans merge semantic_fixed.rebalance.srt video.mp4 \
   -o video.dub.mp4
 
 # 4. 同步审计
-python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.rebalance.srt
+python -m flexdub sync_audit video.dub.mp4 semantic_fixed.rebalance.srt
 ```
 
 **关键参数调整：**
@@ -1922,7 +1922,7 @@ asyncio.run(main())
 PY
 
 # 3. 合成（严格模式）
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --ar 48000 \
@@ -1932,7 +1932,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
   -o video.edge.dub.mp4
 
 # 4. 同步审计
-python -m pyvideotrans sync_audit video.edge.dub.mp4 semantic_fixed.srt
+python -m flexdub sync_audit video.edge.dub.mp4 semantic_fixed.srt
 ```
 
 **关键参数：**
@@ -2011,7 +2011,7 @@ python -m pyvideotrans sync_audit video.edge.dub.mp4 semantic_fixed.srt
 # 输出：semantic_fixed.srt
 
 # 2. 执行 Mode B 合成
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --ar 48000 \
@@ -2024,7 +2024,7 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "video.mode_b.dub.mp4"
 
 # 4. 同步审计
-python -m pyvideotrans sync_audit video.mode_b.dub.mp4 semantic_fixed.srt
+python -m flexdub sync_audit video.mode_b.dub.mp4 semantic_fixed.srt
 ```
 
 **完整流程（长视频分段处理）：**
@@ -2036,7 +2036,7 @@ python -m pyvideotrans sync_audit video.mode_b.dub.mp4 semantic_fixed.srt
 # 2. 分段处理（Mode B）
 for i in {01..06}; do
   echo "处理第 $i 段..."
-  python -m pyvideotrans merge \
+  python -m flexdub merge \
     "data/input/ProjectName/chunks/semantic_part${i}.srt" \
     "data/input/ProjectName/video.mp4" \
     --backend edge_tts \
@@ -2066,7 +2066,7 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "final_output.mp4"
 
 # 5. 同步审计
-python -m pyvideotrans sync_audit "final_output.mp4" \
+python -m flexdub sync_audit "final_output.mp4" \
   "data/input/ProjectName/semantic_fixed.srt"
 ```
 
@@ -2143,7 +2143,7 @@ else:
 
 **语法：**
 ```bash
-python -m pyvideotrans merge <srt_path> <video_path> \
+python -m flexdub merge <srt_path> <video_path> \
   --backend {edge_tts,macos_say} \
   --voice <voice_id> \
   [选项]
@@ -2186,7 +2186,7 @@ python -m pyvideotrans merge <srt_path> <video_path> \
 
 **语法：**
 ```bash
-python -m pyvideotrans rebalance <srt_path> [选项]
+python -m flexdub rebalance <srt_path> [选项]
 ```
 
 **必需参数：**
@@ -2219,7 +2219,7 @@ python -m pyvideotrans rebalance <srt_path> [选项]
 
 **语法：**
 ```bash
-python -m pyvideotrans audit <srt_path> [选项]
+python -m flexdub audit <srt_path> [选项]
 ```
 
 **必需参数：**
@@ -2249,7 +2249,7 @@ python -m pyvideotrans audit <srt_path> [选项]
 
 **语法：**
 ```bash
-python -m pyvideotrans rewrite <srt_path> [选项]
+python -m flexdub rewrite <srt_path> [选项]
 ```
 
 **必需参数：**
@@ -2282,7 +2282,7 @@ python -m pyvideotrans rewrite <srt_path> [选项]
 
 **语法：**
 ```bash
-python -m pyvideotrans project_merge <project_dir> \
+python -m flexdub project_merge <project_dir> \
   --backend {edge_tts,macos_say} \
   [选项]
 ```
@@ -2327,7 +2327,7 @@ python -m pyvideotrans project_merge <project_dir> \
 
 **语法：**
 ```bash
-python -m pyvideotrans sync_audit <video_path> <srt_path> [选项]
+python -m flexdub sync_audit <video_path> <srt_path> [选项]
 ```
 
 **必需参数：**
@@ -2361,7 +2361,7 @@ python -m pyvideotrans sync_audit <video_path> <srt_path> [选项]
 
 **语法：**
 ```bash
-python -m pyvideotrans validate_project <project_dir>
+python -m flexdub validate_project <project_dir>
 ```
 
 **必需参数：**
@@ -2400,7 +2400,7 @@ python -m pyvideotrans validate_project <project_dir>
 
 **语法：**
 ```bash
-python -m pyvideotrans qa <srt_path> [选项]
+python -m flexdub qa <srt_path> [选项]
 ```
 
 **必需参数：**
@@ -2547,13 +2547,13 @@ pip show edge-tts  # 查看当前版本
 pip install edge-tts==7.2.1  # 降级到稳定版本
 
 # 方案 1：降低并发
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --jobs 1
 
 # 方案 2：启用严格模式（失败即停）
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --jobs 1 \
@@ -2670,7 +2670,7 @@ with open('output.srt', 'w', encoding='utf-8-sig') as f:
 # - 单块最多 12 秒
 
 # 方案 2：使用 rewrite 命令
-python -m pyvideotrans rewrite video.srt \
+python -m flexdub rewrite video.srt \
   --max-chars 200 \
   --max-duration 12000 \
   -o semantic_fixed.srt
@@ -2700,7 +2700,7 @@ python -m pyvideotrans rewrite video.srt \
 # - 单块最多 150 字符
 
 # 方案 2：在再平衡阶段扩窗
-python -m pyvideotrans rebalance video.srt \
+python -m flexdub rebalance video.srt \
   --target-cpm 160 \
   --panic-cpm 300 \
   --max-shift 6000 \
@@ -2723,7 +2723,7 @@ python -m pyvideotrans rebalance video.srt \
 1. **检查是否使用了正确的字幕文件**
    ```bash
    # 应使用 rebalance.srt，而不是原始 SRT
-   python -m pyvideotrans sync_audit video.dub.mp4 video.rebalance.srt
+   python -m flexdub sync_audit video.dub.mp4 video.rebalance.srt
    ```
 
 2. **检查静音移除是否过度**
@@ -2740,13 +2740,13 @@ python -m pyvideotrans rebalance video.srt \
 
 ```bash
 # 方案 1：重新再平衡
-python -m pyvideotrans rebalance video.srt \
+python -m flexdub rebalance video.srt \
   --target-cpm 180 \
   --max-shift 2000 \
   -o video.rebalance.srt
 
 # 方案 2：使用聚类模式（保留微锚点）
-python -m pyvideotrans merge video.srt video.mp4 \
+python -m flexdub merge video.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --clustered
@@ -2795,7 +2795,7 @@ cat > voice_map.json <<EOF
 EOF
 
 # 方案 3：确保使用 --keep-brackets
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -2832,7 +2832,7 @@ TTS 语速比原字幕时间窗口慢很多，导致拉伸比例过大。
 
 2. **检查字幕密度**
    ```bash
-   python -m pyvideotrans audit semantic_fixed.srt
+   python -m flexdub audit semantic_fixed.srt
    ```
    如果 CPM 很高（> 300），说明字幕很密集
 
@@ -2846,7 +2846,7 @@ TTS 语速比原字幕时间窗口慢很多，导致拉伸比例过大。
 # - 在逗号/分号处切分长句
 
 # 方案 2：使用 Mode A（如果拉伸过度不可接受）
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --mode elastic-audio \
@@ -2888,7 +2888,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 
 ```bash
 # 方案 1：降低并发数
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --mode elastic-video \
@@ -2899,7 +2899,7 @@ python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
 # 然后使用 ffmpeg concat 合并
 
 # 方案 3：使用 Mode A（快速处理）
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --mode elastic-audio \
@@ -3029,7 +3029,7 @@ def choose_dubbing_mode(user_requirements, video_type, duration_constraint):
 ```bash
 # 分段处理
 for i in {01..06}; do
-  python -m pyvideotrans merge "part${i}.srt" "video.mp4" \
+  python -m flexdub merge "part${i}.srt" "video.mp4" \
     --mode elastic-video -o "mode_b_part${i}.mp4"
 done
 
@@ -3050,7 +3050,7 @@ ffprobe -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 "final_output.mp4"
 
 # 验证音视频同步
-python -m pyvideotrans sync_audit "final_output.mp4" "semantic_fixed.srt"
+python -m flexdub sync_audit "final_output.mp4" "semantic_fixed.srt"
 ```
 
 ---
@@ -3110,10 +3110,10 @@ ffmpeg -f concat -safe 0 -i concat_list.txt \
 **诊断流程**：
 ```bash
 # 1. CPM 审计
-python -m pyvideotrans audit semantic_fixed.srt
+python -m flexdub audit semantic_fixed.srt
 
 # 2. 同步审计
-python -m pyvideotrans sync_audit video.dub.mp4 semantic_fixed.rebalance.srt
+python -m flexdub sync_audit video.dub.mp4 semantic_fixed.rebalance.srt
 
 # 3. 检查日志
 grep -E "ERROR|WARNING" process.log
@@ -3145,7 +3145,7 @@ grep -E "ERROR|WARNING" process.log
 4. **监控系统资源**：
    ```bash
    # 监控 CPU 和内存使用
-   top -p $(pgrep -f pyvideotrans)
+   top -p $(pgrep -f flexdub)
    ```
 
 ---
@@ -3377,7 +3377,7 @@ def robust_tts_synthesis(text, voice, max_retries=3):
    ```bash
    # 使用 GNU parallel
    ls -d data/input/*/ | parallel -j 2 \
-     python -m pyvideotrans project_merge {} --backend edge_tts --auto-voice
+     python -m flexdub project_merge {} --backend edge_tts --auto-voice
    ```
 
 2. **统一参数配置**：
@@ -3397,7 +3397,7 @@ def robust_tts_synthesis(text, voice, max_retries=3):
    ```bash
    # 检查所有输出
    for f in data/output/*/final_output.mp4; do
-     python -m pyvideotrans sync_audit "$f" "${f%.mp4}.srt"
+     python -m flexdub sync_audit "$f" "${f%.mp4}.srt"
    done
    ```
 
@@ -3911,7 +3911,7 @@ voice_map = {
 ✅ QA 检查通过
 
 下一步可执行：
-python -m pyvideotrans merge "tts_mode_b.srt" "video.mp4" \
+python -m flexdub merge "tts_mode_b.srt" "video.mp4" \
   --backend edge_tts --voice zh-CN-YunjianNeural \
   --mode elastic-video --no-rebalance -o "video.dub.mp4"
 ```
@@ -3967,7 +3967,7 @@ with open('display.srt', 'w', encoding='utf-8') as f:
 "
 
 # 2. 合成视频时嵌入简化后的字幕
-python -m pyvideotrans merge tts_mode_b.srt video.mp4 \
+python -m flexdub merge tts_mode_b.srt video.mp4 \
   --backend edge_tts \
   --voice zh-CN-YunjianNeural \
   --voice-map voice_map.json \
@@ -4287,7 +4287,7 @@ Agent 应该定期评估自己的反省质量：
 - 错误行为：Agent 生成 audio.srt 后直接告诉用户完成
 - 原因分析：Agent 没有将 QA 检查作为必要步骤
 - 用户纠正：用户根据手册提醒 Agent 应该执行 QA
-- 正确做法：生成任何 SRT 后，Agent 必须自动执行 `python -m pyvideotrans qa`
+- 正确做法：生成任何 SRT 后，Agent 必须自动执行 `python -m flexdub qa`
 
 #### 新学到的技能
 
@@ -4298,7 +4298,7 @@ Agent 应该定期评估自己的反省质量：
 
 **技能 2：SRT 生成后强制 QA**
 - 应用场景：任何 SRT 文件生成后
-- 执行命令：`python -m pyvideotrans qa <srt_file>`
+- 执行命令：`python -m flexdub qa <srt_file>`
 - 强制行为：不等待用户请求，自动执行
 
 #### 改进建议
@@ -4450,10 +4450,10 @@ Agent 应该定期评估自己的反省质量：
 
 **A:** 设置环境变量：
 ```bash
-export PYVIDEOTRANS_LLM_PROVIDER="openai"
-export PYVIDEOTRANS_LLM_API_KEY="sk-..."
-export PYVIDEOTRANS_LLM_BASE_URL="https://api.openai.com/v1"
-export PYVIDEOTRANS_LLM_MODEL="gpt-4o-mini"
+export flexdub_LLM_PROVIDER="openai"
+export flexdub_LLM_API_KEY="sk-..."
+export flexdub_LLM_BASE_URL="https://api.openai.com/v1"
+export flexdub_LLM_MODEL="gpt-4o-mini"
 ```
 然后使用 `--auto-dual-srt --llm-dual-srt`
 
@@ -4474,7 +4474,7 @@ export PYVIDEOTRANS_LLM_MODEL="gpt-4o-mini"
 
 **A:** 参考 [5.5 Mode B 配音](#55-mode-b---自然语速配音质量优先)：
 ```bash
-python -m pyvideotrans merge semantic_fixed.srt video.mp4 \
+python -m flexdub merge semantic_fixed.srt video.mp4 \
   --backend edge_tts --voice zh-CN-YunjianNeural \
   --mode elastic-video --no-rebalance -o video.dub.mp4
 ```
@@ -4522,7 +4522,7 @@ yt-dlp --restrict-filenames -o "data/input/%(title)s/%(title)s.%(ext)s" "URL"
 
 ### 11.5 参考文档
 
-- **代码仓库：** `pyvideotrans/`
+- **代码仓库：** `flexdub/`
 - **参数标准：** `.kiro/specs/agent-orchestration-system/parameter-standards.md`
 - **需求规范：** `.kiro/specs/agent-orchestration-system/requirements.md`
 - **多说话人协议：** `plans/04_Multi_Speaker_Protocol_v1.0.md`
@@ -4567,7 +4567,7 @@ yt-dlp --restrict-filenames -o "data/input/%(title)s/%(title)s.%(ext)s" "URL"
 
 ## 结语
 
-本手册旨在为 PyVideoTrans Agent 提供清晰、可执行的操作指南。核心原则是：
+本手册旨在为 flexdub Agent 提供清晰、可执行的操作指南。核心原则是：
 
 1. **LLM-First：** 语义操作必须在脚本执行之前
 2. **Text Immutability：** Script 阶段严格不可变文本

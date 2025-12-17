@@ -1,4 +1,4 @@
-from pyvideotrans.cli.__main__ import _parse_args
+from flexdub.cli.__main__ import _parse_args
 
 def test_defaults_rebalance():
     args = _parse_args(["rebalance", "dummy.srt", "-o", "out.srt"])
