@@ -5,7 +5,7 @@ FlexDub is an elastic dubbing pipeline for video localization. It processes SRT 
 ## Core Capabilities
 
 - Subtitle timeline rebalancing (CPM-based optimization with panic mode)
-- Multi-backend TTS synthesis (Edge TTS, macOS Say)
+- TTS synthesis (Edge TTS, Doubao TTS)
 - Elastic audio processing (silence removal, time stretching, padding)
 - Automated audio-video muxing with soft subtitle embedding
 - Quality assurance through sync auditing and CPM analysis

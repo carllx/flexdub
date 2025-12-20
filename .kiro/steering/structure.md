@@ -18,7 +18,7 @@ flexdub/           # Main package (flexdub)
 ├── backends/           # TTS backends
 │   └── tts/
 │       ├── edge.py     # Edge TTS implementation
-│       ├── say.py      # macOS Say implementation
+│       ├── doubao.py   # Doubao TTS implementation (HTTP service)
 │       └── interfaces.py
 └── pipelines/          # High-level workflows
     └── dubbing.py      # Audio build pipeline (TTS + stretch + concat)
@@ -29,9 +29,13 @@ data/
 └── output/             # Processed outputs (dub.mp4, rebalance.srt, reports)
 
 tests/                  # Unit and integration tests
-plans/                  # Project documentation and decision matrices
-agents/                 # Legacy agent scripts (being phased out)
 scripts/                # Utility scripts
+
+.agent/                 # Agent cognitive layer
+├── config.md           # Cognitive configuration
+├── loader.py           # Skill loader
+├── skills/             # Skill packages (progressive disclosure)
+└── workflows/          # Workflow definitions
 ```
 
 ## Key Modules
@@ -39,7 +43,7 @@ scripts/                # Utility scripts
 ### CLI (`flexdub/cli/__main__.py`)
 - Entry point for all commands
 - Enforces text immutability (non-rewrite stages)
-- Handles fallback logic and parameter validation
+- Parameter validation (no fallback on TTS failure)
 
 ### Core Algorithms (`flexdub/core/`)
 - `subtitle.py`: SRT parsing, semantic restructure, LLM dual-track generation
@@ -50,6 +54,14 @@ scripts/                # Utility scripts
 ### Pipelines (`flexdub/pipelines/dubbing.py`)
 - `build_audio_from_srt`: Per-segment TTS synthesis
 - `build_audio_from_srt_clustered`: Clustered synthesis with micro-splitting
+
+### Pipelines (`flexdub/pipelines/elastic_video.py`)
+- Mode B (elastic-video) pipeline - default mode
+- Supports Edge TTS and Doubao TTS backends
+- TTS cache for resume/retry capability
+- Retry mechanism (3 attempts, 2s delay)
+- Character length validation (75 char threshold)
+- Bracket content filtering before TTS
 
 ## Data Models
 

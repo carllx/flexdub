@@ -1,0 +1,55 @@
+# FlexDub Agent Skills Index
+# 渐进式披露第一层：元数据索引
+# Agent 启动时只加载此文件，按需加载具体 SKILL.md
+
+skills:
+  - name: video_download
+    description: 视频下载技能 - 使用 yt-dlp 从 YouTube 下载视频和字幕
+    path: .agent/skills/video_download/SKILL.md
+    triggers:
+      - "下载"
+      - "YouTube"
+      - "yt-dlp"
+    
+  - name: semantic_refine
+    description: 语义精炼技能 - 修正翻译错误、优化断句、标注说话人
+    path: .agent/skills/semantic_refine/SKILL.md
+    triggers:
+      - "翻译"
+      - "断句"
+      - "说话人"
+      - "术语"
+    scripts:
+      - .agent/skills/semantic_refine/scripts/terminology.py
+    
+  - name: auto_dub
+    description: 自动化配音技能 - 执行 TTS 合成和音视频合流
+    path: .agent/skills/auto_dub/SKILL.md
+    triggers:
+      - "配音"
+      - "dub"
+      - "TTS"
+    mcp_tools:
+      - analyze_project
+      - run_qa_check
+    
+  - name: diagnosis
+    description: 故障诊断技能 - 分析错误原因并提供修复建议
+    path: .agent/skills/diagnosis/SKILL.md
+    triggers:
+      - "错误"
+      - "失败"
+      - "诊断"
+    scripts:
+      - .agent/skills/diagnosis/scripts/diagnose.py
+    mcp_tools:
+      - diagnose_error
+
+workflows:
+  - name: dubbing
+    description: 端到端视频配音工作流
+    path: .agent/workflows/dubbing.md
+    triggers:
+      - "配音项目"
+      - "翻译视频"
+    steps: 6
