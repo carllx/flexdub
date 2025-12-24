@@ -19,7 +19,7 @@ def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
     m.add_argument("srt_path")
     m.add_argument("video_path")
     m.add_argument("-o", "--output", default=None)
-    m.add_argument("--backend", choices=["edge_tts", "macos_say"], required=True)
+    m.add_argument("--backend", choices=["edge_tts", "doubao"], required=True)
     m.add_argument("--voice", default="zh-CN-YunjianNeural")
     m.add_argument("--ar", type=int, default=48000)
     m.add_argument("--keep-brackets", action="store_true")
@@ -41,7 +41,8 @@ def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
     m.add_argument("--llm-dual-srt", action="store_true")
     m.add_argument("--no-fallback", action="store_true")
     m.add_argument("--voice-map", default=None)
-    m.add_argument("--mode", choices=["elastic-audio", "elastic-video"], default="elastic-audio", help="Pipeline mode: elastic-audio (compress audio to fit video) or elastic-video (stretch video to fit audio)")
+    m.add_argument("--mode", choices=["elastic-audio", "elastic-video"], default="elastic-video", help="Pipeline mode: elastic-audio (compress audio to fit video) or elastic-video (stretch video to fit audio, default)")
+    m.add_argument("--skip-length-check", action="store_true", help="Skip character length validation for TTS (default threshold: 75 chars)")
 
     r = sub.add_parser("rebalance")
     r.add_argument("srt_path")
@@ -67,7 +68,7 @@ def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
     jm.add_argument("video_path")
     jm.add_argument("-o", "--output", default=None)
     jm.add_argument("--source", choices=["auto", "whisperx", "gemini"], default="auto")
-    jm.add_argument("--backend", choices=["edge_tts", "macos_say"], required=True)
+    jm.add_argument("--backend", choices=["edge_tts", "doubao"], required=True)
     jm.add_argument("--voice", default="zh-CN-YunjianNeural")
     jm.add_argument("--ar", type=int, default=48000)
     jm.add_argument("--keep-brackets", action="store_true")
@@ -99,7 +100,7 @@ def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
     pm = sub.add_parser("project_merge")
     pm.add_argument("project_dir")
     pm.add_argument("-o", "--output_dir", default=None)
-    pm.add_argument("--backend", choices=["edge_tts", "macos_say"], required=True)
+    pm.add_argument("--backend", choices=["edge_tts", "doubao"], required=True)
     pm.add_argument("--voice", default=None)
     pm.add_argument("--ar", type=int, default=48000)
     pm.add_argument("--keep-brackets", action="store_true")
@@ -148,7 +149,33 @@ def _parse_args(argv: Optional[list] = None) -> argparse.Namespace:
     qa.add_argument("--video-duration-ms", type=int, default=None)
     qa.add_argument("--max-chars", type=int, default=250)
     qa.add_argument("--max-duration-ms", type=int, default=15000)
+    qa.add_argument("--tts-char-threshold", type=int, default=75, help="Character threshold for TTS stability (default: 75)")
+    qa.add_argument("--backend", choices=["edge_tts", "doubao"], default="doubao", help="TTS backend for threshold check")
     qa.add_argument("-o", "--output", default=None, help="Output QA report to file")
+    
+    # gs_align command: align gs.md with SRT timeline
+    ga = sub.add_parser("gs_align", help="Align gs.md (human-edited transcript) with SRT timeline")
+    ga.add_argument("gs_path", help="Path to gs.md file")
+    ga.add_argument("srt_path", help="Path to original SRT file (for timeline)")
+    ga.add_argument("-o", "--output", default=None, help="Output audio.srt path")
+    ga.add_argument("--voice-map-output", default=None, help="Output voice_map.json path")
+    ga.add_argument("--max-chars", type=int, default=75, help="Max characters per segment (default: 75 for Doubao TTS)")
+    ga.add_argument("--max-duration-ms", type=int, default=15000, help="Max duration per segment in ms")
+    ga.add_argument("--target-cpm", type=int, default=180, help="Target CPM for rebalancing")
+    ga.add_argument("--fuzzy-window-ms", type=int, default=2000, help="Fuzzy matching window for anchor points (ms)")
+    ga.add_argument("--extract-glossary", action="store_true", help="Extract glossary from gs.md")
+    ga.add_argument("--glossary-output", default=None, help="Output glossary.yaml path")
+    
+    # semantic_refine command: refine SRT translation using gs.md as semantic context
+    sr = sub.add_parser("semantic_refine", help="Refine SRT translation using gs.md as semantic context")
+    sr.add_argument("gs_path", help="Path to gs.md file (semantic context)")
+    sr.add_argument("srt_path", help="Path to SRT file to refine")
+    sr.add_argument("-o", "--output", default=None, help="Output refined.audio.srt path")
+    sr.add_argument("--include-speaker-tags", action="store_true", help="Include speaker tags in output")
+    sr.add_argument("--checkpoint-dir", default=None, help="Directory for checkpoint files (resume support)")
+    sr.add_argument("--api-key", default=None, help="LLM API key (or set FLEXDUB_LLM_API_KEY env)")
+    sr.add_argument("--base-url", default=None, help="LLM API base URL (or set FLEXDUB_LLM_BASE_URL env)")
+    sr.add_argument("--model", default=None, help="LLM model name (or set FLEXDUB_LLM_MODEL env)")
     
     return p.parse_args(argv)
 
@@ -187,7 +214,7 @@ def main(argv: Optional[list] = None) -> int:
         voice = args.voice
         ar = args.ar
         jobs = args.jobs
-        if backend == "macos_say" or args.no_fallback:
+        if args.no_fallback:
             jobs = 1
         
         # Mode selection: elastic-audio (A) or elastic-video (B)
@@ -211,7 +238,8 @@ def main(argv: Optional[list] = None) -> int:
                     build_elastic_video_from_srt(
                         items, args.video_path, voice, backend, ar,
                         jobs=jobs, progress=not args.no_progress, voice_map=vmap,
-                        debug_sync=args.debug_sync
+                        debug_sync=args.debug_sync,
+                        skip_length_check=args.skip_length_check
                     )
                 )
                 # Update items with new timeline
@@ -241,14 +269,9 @@ def main(argv: Optional[list] = None) -> int:
                     wavs = asyncio.run(_build(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress, smart_split=args.smart_split, voice_map=vmap))
                 else:
                     wavs = asyncio.run(_build(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
-            except Exception:
-                if args.no_fallback:
-                    return 1
-                if backend == "edge_tts":
-                    backend = "macos_say"
-                    voice = "Ting-Ting"
-                    jobs = 1
-                    wavs = asyncio.run(build_audio_from_srt(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
+            except Exception as e:
+                print(f"[ERROR] TTS synthesis failed: {e}")
+                return 1
         out = args.output
         if out is None:
             base, _ = os.path.splitext(os.path.basename(args.video_path))
@@ -393,7 +416,7 @@ def main(argv: Optional[list] = None) -> int:
         voice = args.voice
         ar = args.ar
         jobs = args.jobs
-        if backend == "macos_say" or args.no_fallback:
+        if args.no_fallback:
             jobs = 1
         if args.clustered:
             from flexdub.pipelines.dubbing import build_audio_from_srt_clustered as _build2
@@ -412,14 +435,9 @@ def main(argv: Optional[list] = None) -> int:
                 wavs = asyncio.run(_build2(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress, smart_split=args.smart_split, voice_map=vmap2))
             else:
                 wavs = asyncio.run(_build2(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
-        except Exception:
-            if args.no_fallback:
-                return 1
-            if backend == "edge_tts":
-                backend = "macos_say"
-                voice = "Ting-Ting"
-                jobs = 1
-                wavs = asyncio.run(build_audio_from_srt(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
+        except Exception as e:
+            print(f"[ERROR] TTS synthesis failed: {e}")
+            return 1
         ordered2: list[str] = []
         dbg_lines2: list[str] = []
         if items:
@@ -653,7 +671,7 @@ def main(argv: Optional[list] = None) -> int:
                 log.write(f"[VOICE] {voice}\n")
                 ar = args.ar
                 jobs = args.jobs
-                if backend == "macos_say" or args.no_fallback:
+                if args.no_fallback:
                     jobs = 1
                 try:
                     use_clustered = args.clustered or args.auto_dual_srt
@@ -673,14 +691,7 @@ def main(argv: Optional[list] = None) -> int:
                         wavs = asyncio.run(_build3(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
                 except Exception as e:
                     log.write(f"[ERROR] synth failed: {e}\n")
-                    if args.no_fallback:
-                        raise e
-                    if backend == "edge_tts":
-                        backend = "macos_say"
-                        voice = "Ting-Ting"
-                        jobs = 1
-                        log.write("[FALLBACK] macos_say Ting-Ting\n")
-                        wavs = asyncio.run(build_audio_from_srt(items, voice, backend, ar, jobs=jobs, progress=not args.no_progress))
+                    raise e
                 ordered: list[str] = []
                 dbg_lines3: list[str] = []
                 if items:
@@ -815,6 +826,8 @@ def main(argv: Optional[list] = None) -> int:
         return 0
     if args.cmd == "qa":
         from flexdub.core.qa import run_qa_checks
+        from flexdub.pipelines.elastic_video import validate_segment_lengths, TTS_CHAR_THRESHOLD
+        
         report = run_qa_checks(
             args.srt_path,
             voice_map_path=args.voice_map,
@@ -822,6 +835,12 @@ def main(argv: Optional[list] = None) -> int:
             max_chars=args.max_chars,
             max_duration_ms=args.max_duration_ms
         )
+        
+        # TTS character length check
+        tts_threshold = args.tts_char_threshold
+        items = read_srt(args.srt_path)
+        oversized_tts = validate_segment_lengths(items, tts_threshold, args.backend)
+        
         # Print results
         print(f"[QA] SRT Valid: {report.srt_valid}")
         print(f"[QA] Speaker Coverage: {report.speaker_coverage:.1%}")
@@ -833,10 +852,24 @@ def main(argv: Optional[list] = None) -> int:
             print(f"[QA] Chars Exceeded ({args.max_chars}): {report.max_chars_exceeded[:10]}{'...' if len(report.max_chars_exceeded) > 10 else ''}")
         if report.max_duration_exceeded:
             print(f"[QA] Duration Exceeded ({args.max_duration_ms}ms): {report.max_duration_exceeded[:10]}{'...' if len(report.max_duration_exceeded) > 10 else ''}")
+        
+        # TTS character length results
+        if oversized_tts:
+            print(f"[QA] TTS Char Threshold ({tts_threshold}, backend={args.backend}): {len(oversized_tts)} segments exceeded")
+            for seg_idx, char_count, preview in oversized_tts[:10]:
+                print(f"[QA]   Segment {seg_idx}: {char_count} chars - {preview}")
+            if len(oversized_tts) > 10:
+                print(f"[QA]   ... and {len(oversized_tts) - 10} more")
+        else:
+            print(f"[QA] TTS Char Threshold ({tts_threshold}): OK")
+        
         if args.voice_map:
             print(f"[QA] Voice Map Valid: {report.voice_map_valid}")
             print(f"[QA] Voice Map Has DEFAULT: {report.voice_map_has_default}")
-        print(f"[QA] ALL PASSED: {report.all_passed}")
+        
+        # Update all_passed to include TTS check
+        all_passed = report.all_passed and len(oversized_tts) == 0
+        print(f"[QA] ALL PASSED: {all_passed}")
         
         # Write report to file if requested
         if args.output:
@@ -850,15 +883,148 @@ def main(argv: Optional[list] = None) -> int:
                 "last_end_ms": report.last_end_ms,
                 "max_chars_exceeded": report.max_chars_exceeded,
                 "max_duration_exceeded": report.max_duration_exceeded,
+                "tts_char_threshold": tts_threshold,
+                "tts_oversized_segments": [{"segment": s[0], "chars": s[1], "preview": s[2]} for s in oversized_tts],
                 "voice_map_valid": report.voice_map_valid,
                 "voice_map_has_default": report.voice_map_has_default,
-                "all_passed": report.all_passed
+                "all_passed": all_passed
             }
             with open(args.output, "w", encoding="utf-8") as f:
                 _json.dump(report_dict, f, ensure_ascii=False, indent=2)
             print(f"[QA] Report written to: {args.output}")
         
-        return 0 if report.all_passed else 1
+        return 0 if all_passed else 1
+    
+    if args.cmd == "gs_align":
+        from flexdub.core.gs_align import (
+            parse_gs_md, align_gs_to_srt_v2, extract_glossary_from_gs,
+            extract_speakers, calculate_coverage, SpeakerTracker
+        )
+        import json as _json
+        
+        # Read gs.md
+        with open(args.gs_path, "r", encoding="utf-8") as f:
+            gs_content = f.read()
+        
+        # Parse gs.md into paragraphs (extract speaker anchors)
+        gs_paragraphs = parse_gs_md(gs_content)
+        if not gs_paragraphs:
+            print("[ERROR] No paragraphs found in gs.md")
+            return 1
+        
+        # Extract speakers
+        speakers = extract_speakers(gs_content)
+        print(f"[GS_ALIGN] Parsed {len(gs_paragraphs)} anchors from gs.md")
+        print(f"[GS_ALIGN] Found {len(speakers)} speakers: {speakers}")
+        
+        # Read original SRT for timeline
+        srt_items = read_srt(args.srt_path)
+        print(f"[GS_ALIGN] Read {len(srt_items)} items from SRT")
+        
+        # Calculate coverage stats
+        coverage = calculate_coverage(gs_paragraphs, srt_items)
+        print(f"[GS_ALIGN] Coverage: {coverage.coverage_percent:.1f}% ({coverage.covered_entries}/{coverage.total_entries})")
+        print(f"[GS_ALIGN] Last anchor: {coverage.last_anchor_time}, Video duration: {coverage.video_duration}")
+        
+        if coverage.coverage_percent < 80:
+            print(f"[GS_ALIGN] ⚠️  Warning: Coverage below 80%, some segments may use fallback")
+        
+        # Align: add speaker tags to original SRT (preserving original text)
+        aligned_items = align_gs_to_srt_v2(
+            gs_paragraphs,
+            srt_items,
+            max_chars=args.max_chars,
+            include_speaker_tags=True
+        )
+        
+        print(f"[GS_ALIGN] Generated {len(aligned_items)} aligned items (original count preserved)")
+        
+        # Determine output path
+        out_path = args.output
+        if out_path is None:
+            base = os.path.splitext(os.path.basename(args.srt_path))[0]
+            out_dir = os.path.dirname(args.srt_path)
+            out_path = os.path.join(out_dir, base + ".audio.srt")
+        
+        # Write aligned SRT
+        write_srt(out_path, aligned_items)
+        print(f"[GS_ALIGN] Written: {out_path}")
+        
+        # Generate voice_map.json
+        if speakers:
+            voice_map_path = args.voice_map_output
+            if voice_map_path is None:
+                voice_map_path = os.path.join(os.path.dirname(out_path), "voice_map.json")
+            
+            # Generate voice_map with placeholder voices
+            tracker = SpeakerTracker()
+            voice_map = tracker.generate_voice_map(speakers)
+            
+            with open(voice_map_path, "w", encoding="utf-8") as f:
+                _json.dump(voice_map, f, ensure_ascii=False, indent=2)
+            print(f"[GS_ALIGN] Generated voice_map with {len(speakers)} speakers: {voice_map_path}")
+            print(f"[GS_ALIGN] ⚠️  Please update voice_map.json with appropriate voices from: curl http://localhost:3456/speakers")
+        
+        # Extract glossary if requested
+        if args.extract_glossary:
+            glossary = extract_glossary_from_gs(gs_content)
+            if glossary:
+                glossary_path = args.glossary_output
+                if glossary_path is None:
+                    glossary_path = os.path.join(os.path.dirname(out_path), "glossary.yaml")
+                
+                # Write as YAML
+                with open(glossary_path, "w", encoding="utf-8") as f:
+                    f.write("# Auto-extracted glossary from gs.md\n")
+                    f.write("# Format: English: 中文翻译\n\n")
+                    for en, zh in sorted(glossary.items()):
+                        f.write(f'"{en}": "{zh}"\n')
+                print(f"[GS_ALIGN] Extracted {len(glossary)} terms to: {glossary_path}")
+        
+        return 0
+    
+    if args.cmd == "semantic_refine":
+        from flexdub.core.semantic_refine import SemanticRefiner
+        
+        # Initialize refiner
+        refiner = SemanticRefiner(
+            api_key=args.api_key,
+            base_url=args.base_url,
+            model=args.model,
+            checkpoint_dir=args.checkpoint_dir
+        )
+        
+        # Determine output path
+        out_path = args.output
+        if out_path is None:
+            base = os.path.splitext(os.path.basename(args.srt_path))[0]
+            out_dir = os.path.dirname(args.srt_path)
+            out_path = os.path.join(out_dir, base + ".refined.audio.srt")
+        
+        # Run refinement
+        try:
+            result = refiner.refine(
+                gs_path=args.gs_path,
+                srt_path=args.srt_path,
+                output_path=out_path,
+                include_speaker_tags=args.include_speaker_tags
+            )
+            
+            print(f"\n[SEMANTIC_REFINE] 处理完成!")
+            print(f"[SEMANTIC_REFINE] 总条目数: {result.item_count}")
+            print(f"[SEMANTIC_REFINE] 已矫正条目数: {result.refined_count}")
+            print(f"[SEMANTIC_REFINE] 术语数量: {len(result.terminology_used)}")
+            print(f"[SEMANTIC_REFINE] 发现问题数: {result.issue_count}")
+            print(f"[SEMANTIC_REFINE] 输出文件: {out_path}")
+            
+            return 0
+        except FileNotFoundError as e:
+            print(f"[ERROR] {e}")
+            return 1
+        except Exception as e:
+            print(f"[ERROR] 处理失败: {e}")
+            return 1
+    
     return 1
 
 

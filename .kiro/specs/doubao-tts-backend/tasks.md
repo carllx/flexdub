@@ -1,0 +1,78 @@
+# Implementation Plan
+
+- [x] 1. Create DoubaoTTSBackend class
+  - [x] 1.1 Create `flexdub/backends/tts/doubao.py` with DoubaoTTSBackend class
+    - Inherit from TTSBackend interface
+    - Implement constructor with `server_url` parameter (default: "http://localhost:3456")
+    - Implement `async synthesize(text, voice, ar)` method skeleton
+    - _Requirements: 2.1, 3.3, 5.1_
+  - [x] 1.2 Implement HTTP request to doubao-tts-api
+    - Use aiohttp.ClientSession for async HTTP POST to `/tts`
+    - Send JSON body with `text` and `speaker` fields
+    - Handle default speaker "温柔桃子" when voice is empty
+    - Set 180 second timeout (increased from 60s based on testing)
+    - _Requirements: 1.2, 1.3, 5.2_
+  - [x] 1.3 Implement AAC to WAV conversion
+    - Save response body as temporary AAC file
+    - Use ffmpeg subprocess to convert to mono WAV with specified sample rate
+    - Clean up AAC file after successful conversion
+    - Handle ffmpeg unavailable case (return AAC path)
+    - _Requirements: 2.2, 4.1, 4.3, 5.3, 5.4_
+  - [x] 1.4 Implement error handling
+    - Catch aiohttp.ClientError for connection failures
+    - Check HTTP status code and raise RuntimeError for non-200
+    - Handle timeout with descriptive error message
+    - Clean up temp files on ffmpeg failure
+    - _Requirements: 3.1, 3.2, 3.4, 4.2_
+  - [ ]* 1.5 Write property test for voice parameter passthrough
+    - **Property 1: Voice parameter passthrough**
+    - **Validates: Requirements 1.2**
+
+- [x] 2. Integrate DoubaoTTSBackend into FlexDub
+  - [x] 2.1 Update module exports
+    - Add `from .doubao import DoubaoTTSBackend` to `flexdub/backends/tts/__init__.py`
+    - _Requirements: 2.4_
+  - [x] 2.2 Update dubbing.py dispatch logic
+    - Add `elif backend == "doubao"` branch in `_synthesize_segment()`
+    - Instantiate DoubaoTTSBackend when backend is "doubao"
+    - _Requirements: 2.3_
+  - [x] 2.3 Update CLI argument parser
+    - Add "doubao" to `--backend` choices in merge, json_merge, project_merge commands
+    - _Requirements: 1.1, 1.4_
+  - [x] 2.4 Update elastic_video.py for Doubao support
+    - Add DoubaoTTSBackend import and dispatch in `_synthesize_natural_speed()`
+    - Mode B (elastic-video) now supports both Edge TTS and Doubao TTS
+    - _Requirements: 2.3_
+  - [ ]* 2.5 Write property test for WAV output format
+    - **Property 2: WAV output format consistency**
+    - **Validates: Requirements 2.2**
+
+- [x] 3. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Implement robustness features (added based on testing)
+  - [x] 4.1 Add retry mechanism
+    - 3 retries with 2 second delay between attempts
+    - Log each retry attempt
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [x] 4.2 Add TTS cache for resume capability
+    - Cache directory: `<video_dir>/tts_cache/`
+    - Skip synthesis for cached segments
+    - _Requirements: 9.1, 9.2, 9.3_
+  - [x] 4.3 Add character length validation
+    - TTS_CHAR_THRESHOLD = 75 characters
+    - validate_segment_lengths() function
+    - --skip-length-check CLI option
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 4.4 Add bracket content filtering
+    - Filter `[]`, `【】`, `()` content before TTS
+    - Generate silence for empty-after-filter segments
+    - _Requirements: 7.1, 7.2, 7.3_
+
+- [ ]* 5. Write property test for error handling
+  - [ ]* 5.1 Write property test for error status propagation
+    - **Property 3: Error status propagation**
+    - **Validates: Requirements 3.2**
+
+- [x] 6. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

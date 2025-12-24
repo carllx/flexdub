@@ -62,11 +62,17 @@ python -m pytest -q
 
 ### CLI Usage
 ```bash
-# Merge SRT with video (Edge TTS)
+# Merge SRT with video (Doubao TTS - 默认推荐)
+flexdub merge <srt> <video> --backend doubao --voice 磁性俊宇
+
+# Merge SRT with video (Edge TTS - 备用)
 flexdub merge <srt> <video> --backend edge_tts --voice zh-CN-YunjianNeural
 
-# Merge SRT with video (Doubao TTS)
-flexdub merge <srt> <video> --backend doubao --voice 磁性俊宇
+# gs.md 与 SRT 时间轴对齐（翻译质量优化）
+flexdub gs_align <gs.md> <srt> -o <output.audio.srt> --extract-glossary
+
+# GS 语义矫正 SRT 翻译（LLM 驱动）
+flexdub semantic_refine <gs.md> <srt> -o <output.refined.audio.srt> --include-speaker-tags
 
 # Rebalance subtitle timing
 flexdub rebalance <srt> --target-cpm 180 --panic-cpm 300
@@ -75,10 +81,13 @@ flexdub rebalance <srt> --target-cpm 180 --panic-cpm 300
 flexdub audit <srt> --min-cpm 180 --max-cpm 220 --save cpm.csv
 
 # Project-level processing
-flexdub project_merge <project_dir> --backend edge_tts --auto-voice
+flexdub project_merge <project_dir> --backend doubao --auto-voice
 
 # Sync audit
 flexdub sync_audit <video> <srt> --ar 48000 --win-ms 20
+
+# QA check
+flexdub qa <srt> --voice-map voice_map.json --tts-char-threshold 75
 ```
 
 ## Default Parameters
@@ -110,3 +119,31 @@ flexdub merge <srt> <video> --backend doubao --skip-length-check
 - 超过 75 字符的段落建议重新措辞缩短
 - 保持语义不变的情况下精简表达
 - 使用 `flexdub qa` 预检查后再转换
+
+## LLM 集成（semantic_refine）
+
+`semantic_refine` 命令使用 LLM 进行翻译矫正，需要配置 API：
+
+### 环境变量配置
+```bash
+export FLEXDUB_LLM_API_KEY="your-api-key"
+export FLEXDUB_LLM_BASE_URL="https://api.openai.com/v1/chat/completions"
+export FLEXDUB_LLM_MODEL="gpt-4o-mini"
+```
+
+### 命令行参数
+```bash
+flexdub semantic_refine <gs.md> <srt> \
+  --api-key <key> \
+  --base-url <url> \
+  --model <model> \
+  --include-speaker-tags \
+  --checkpoint-dir <dir>
+```
+
+### 功能特性
+- **分段处理**：大文件自动分成 20-50 条目的 chunks
+- **检查点恢复**：支持中断后继续处理
+- **术语一致性**：从 gs.md 提取术语表，确保翻译一致
+- **本地化审查**：检查字符长度、直译问题
+- **说话人标签**：可选添加 `[Speaker: Name]` 标签

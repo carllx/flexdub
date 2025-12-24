@@ -9,10 +9,14 @@ FlexDub is an elastic dubbing pipeline for video localization. It processes SRT 
 - Elastic audio processing (silence removal, time stretching, padding)
 - Automated audio-video muxing with soft subtitle embedding
 - Quality assurance through sync auditing and CPM analysis
+- GS 语义矫正：使用 gs.md 作为背景上下文，通过 LLM 矫正 SRT 翻译
 
 ## Key Workflow
 
 Input (SRT + Video) → Semantic Restructure → CPM Audit → Rebalance → TTS Synthesis → Audio Stretching/Padding → Concatenation → Mux with Video → QA
+
+### GS 语义矫正工作流
+gs.md + SRT → 上下文提取 → 分段处理 → LLM 矫正 → 本地化审查 → refined.audio.srt
 
 ## Design Philosophy
 

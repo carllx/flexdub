@@ -79,16 +79,16 @@ python -m flexdub json_merge \
 ## Folder Structure（文件夹结构）
 - `data/input/` — raw videos and original subtitles (原始视频与字幕)
 - `data/output/` — processed outputs (处理结果)
-- `agents/srt_duration_agent/srt_resegment.py` — CPM rebalance algorithm（时轴再平衡）
-- `agents/srt_dubbing_agent/srt_dub_merge.py` — elastic pipeline + CLI（弹性管线与命令行）
+- `flexdub/core/` — core algorithms (核心算法)
+- `flexdub/pipelines/` — high-level workflows (高级工作流)
+- `flexdub/cli/` — CLI entrypoints (命令行入口)
+- `.agent/` — agent cognitive layer (Agent 认知层)
 - `tests/` — unit and performance tests（测试）
-- `agent_manual.md` — agent manual（代理手册）
-- `roadmap.md` — project roadmap（项目路线图）
 
 ## Features（特性）
 - CPM borrowing with panic mode（CPM 借还与恐慌模式）
 - Silence removal + Rubber Band stretch, fallback ffmpeg `atempo`（去静音与保形变速）
-- Edge TTS concurrency, macOS `say` sequential fallback（并发与回退）
+- Edge TTS with concurrency support（Edge TTS 并发合成）
 - Progress feedback via `tqdm`（进度反馈）
 - Language detection and auto voice mapping（语言检测与自动音色映射）
 
@@ -96,8 +96,7 @@ python -m flexdub json_merge \
 - Python 3.10+ recommended.
 - `ffmpeg` installed and in PATH.
 - `rubberband` optional for best audio quality; otherwise `atempo` fallback.
-- Python deps: `edge-tts` (optional), `pyrubberband` (optional), `srt`, `soundfile`, `numpy`, `tqdm`.
-- macOS `say` is supported as a local TTS fallback.
+- Python deps: `edge-tts==7.2.1`, `pyrubberband` (optional), `srt`, `soundfile`, `numpy`, `tqdm`.
 
 ## Contributing（贡献指南）
 - Fork and create a feature branch: `git checkout -b feat/your-topic`.
@@ -107,8 +106,9 @@ python -m flexdub json_merge \
 - Ensure no large binaries are committed (`.gitignore` covers media in `data/`).
 
 ## References（参考）
-- Agent Manual: `agents/agent_manual.md`
-- Roadmap: `roadmap.md`
+- Agent Manual: `agent_manual.md`
+- Agent Config: `.agent/config.md`
+- Changelog: `CHANGELOG.md`
 
 ## Versioning（版本）
 - Semantic Versioning (SemVer). Current: `v2.0.0`.

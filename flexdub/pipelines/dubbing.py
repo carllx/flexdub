@@ -7,16 +7,16 @@ from tqdm import tqdm
 from flexdub.core.audio import remove_silence, audio_duration_ms, pad_silence, time_stretch_rubberband, split_wav_by_durations, split_wav_by_durations_smart
 from flexdub.core.subtitle import SRTItem, extract_speaker
 from flexdub.backends.tts.edge import EdgeTTSBackend
-from flexdub.backends.tts.say import SayBackend
+from flexdub.backends.tts.doubao import DoubaoTTSBackend
 
 
 async def _synthesize_segment(text: str, voice: str, backend: str, ar: int) -> str:
     if backend == "edge_tts":
         b = EdgeTTSBackend()
-    elif backend == "macos_say":
-        b = SayBackend()
+    elif backend == "doubao":
+        b = DoubaoTTSBackend()
     else:
-        raise ValueError("unsupported backend")
+        raise ValueError(f"unsupported backend: {backend}")
     tmp_wav = await b.synthesize(text, voice, ar)
     return tmp_wav
 

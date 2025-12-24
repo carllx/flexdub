@@ -124,6 +124,16 @@ python -m flexdub validate_project <project_dir>
 3. 添加说话人标签 `[Speaker:Name]`
 4. 生成 `voice_map.json`
 
+**执行**:
+```bash
+# 如果有 gs.md，使用 semantic_refine 命令（LLM 驱动）
+flexdub semantic_refine <gs.md> <srt> \
+  -o semantic_fixed.srt \
+  --include-speaker-tags
+
+# 如果无 gs.md，需要手动翻译或使用其他翻译工具
+```
+
 **输出**: `semantic_fixed.srt`, `voice_map.json`
 
 ---
@@ -136,19 +146,49 @@ python -m flexdub validate_project <project_dir>
 - `gs.md`：内容准确（人工翻译/校对），时间戳粗略
 - `*.srt`（清理后）：时间准确（来自 YouTube），内容可能有误
 
-**融合逻辑**:
-1. 从 `gs.md` 提取带时间戳的文本段落和说话人
-2. 从清理后的 SRT 提取精确时间轴
-3. 对齐两者，生成最终 `audio.srt`
-4. 根据说话人生成 `voice_map.json`
+**方案 A: LLM 语义矫正（推荐）** - `flexdub semantic_refine`
 
-**拆分规则**（QA 限制）:
-- 单段落 ≤75 字符（Doubao TTS 限制）
-- 单段落 ≤15 秒时长
+```bash
+# 使用 gs.md 作为背景上下文，LLM 矫正 SRT 翻译
+flexdub semantic_refine <gs.md> <原始.srt> \
+  -o <output.refined.audio.srt> \
+  --include-speaker-tags \
+  --checkpoint-dir ./checkpoints
+```
+
+**semantic_refine 功能**:
+1. **上下文提取**：从 gs.md 提取术语表、说话人、关键概念
+2. **分段处理**：大文件自动分成 20-50 条目的 chunks
+3. **LLM 矫正**：逐段调用 LLM 进行翻译矫正
+4. **本地化审查**：检查字符长度（75 字符限制）、直译问题
+5. **检查点恢复**：支持中断后继续处理
+
+**方案 B: 时间轴对齐（无需 LLM）** - `flexdub gs_align`
+
+```bash
+# 将 gs.md 与原始 SRT 时间轴对齐
+flexdub gs_align <gs.md> <原始.srt> \
+  -o <output.audio.srt> \
+  --extract-glossary \
+  --fuzzy-window-ms 3000
+```
+
+**gs_align 算法**:
+1. **解析 gs.md**：提取 `### [MM:SS] Speaker` 格式的段落
+2. **锚点匹配**：用 gs.md 的时间戳定位到 SRT 区间（±3秒模糊窗口）
+3. **文本替换**：用 gs.md 的翻译文本替换 SRT 文本
+4. **时间轴继承**：保留 SRT 的精确时间轴
+5. **长段落拆分**：满足 75 字符 / 15 秒限制
 
 **输出**:
-- `<basename>.audio.srt`：TTS 用字幕
-- `voice_map.json`：说话人映射
+- `<basename>.refined.audio.srt` 或 `<basename>.audio.srt`：TTS 用字幕
+- `voice_map.json`：说话人音色映射
+- `terminology.yaml` / `glossary.yaml`：术语表
+
+**验证**:
+```bash
+flexdub qa <audio.srt> --voice-map voice_map.json
+```
 
 ---
 

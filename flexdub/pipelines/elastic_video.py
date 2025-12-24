@@ -16,7 +16,12 @@ Elastic Video Pipeline (Mode B)
 - 视频片段拉伸比例 = TTS时长 / 原始字幕时长
 - 间隙片段保持原始时长，生成对应的静音音频
 - TTS 音频会缓存到项目目录，避免重复下载
+- 字符长度阈值：75 字符（超过可能导致 Doubao TTS 超时）
 """
+
+# Character length threshold for TTS stability (especially Doubao TTS)
+# Segments exceeding this may timeout or fail
+TTS_CHAR_THRESHOLD = 75
 
 import asyncio
 import hashlib
@@ -27,10 +32,49 @@ from typing import List, Tuple, Optional, Dict
 
 from tqdm import tqdm
 
-from flexdub.core.subtitle import SRTItem, Gap, SegmentInfo, SyncDiagnostics, extract_speaker, detect_gaps
+from flexdub.core.subtitle import SRTItem, Gap, SegmentInfo, SyncDiagnostics, extract_speaker, detect_gaps, remove_bracket_content
 from flexdub.core.audio import audio_duration_ms, make_silence
 from flexdub.backends.tts.edge import EdgeTTSBackend
-from flexdub.backends.tts.say import SayBackend
+from flexdub.backends.tts.doubao import DoubaoTTSBackend
+
+
+def validate_segment_lengths(
+    items: List[SRTItem],
+    threshold: int = TTS_CHAR_THRESHOLD,
+    backend: str = "doubao"
+) -> List[Tuple[int, int, str]]:
+    """
+    验证字幕段落字符长度，返回超过阈值的段落列表。
+    
+    Args:
+        items: 字幕段落列表
+        threshold: 字符长度阈值（默认 75）
+        backend: TTS 后端（doubao 对长文本更敏感）
+        
+    Returns:
+        List of (segment_index, char_count, text_preview) for segments exceeding threshold
+    """
+    from flexdub.core.subtitle import extract_speaker
+    
+    oversized = []
+    for idx, it in enumerate(items):
+        # Extract clean text (without speaker tags)
+        _, clean_text = extract_speaker(it.text)
+        text_to_check = clean_text if clean_text else it.text
+        
+        # Filter out bracket content like [Music], [音乐] etc.
+        text_to_check = remove_bracket_content(text_to_check)
+        
+        # Skip if text becomes empty after filtering
+        if not text_to_check or not text_to_check.strip():
+            continue
+        
+        char_count = len(text_to_check.strip())
+        if char_count > threshold:
+            preview = text_to_check[:40] + "..." if len(text_to_check) > 40 else text_to_check
+            oversized.append((idx + 1, char_count, preview))  # 1-indexed for user display
+    
+    return oversized
 
 
 def _get_tts_cache_path(cache_dir: str, text: str, voice: str, idx: int) -> str:
@@ -44,8 +88,8 @@ async def _synthesize_natural_speed(text: str, voice: str, backend: str, ar: int
     """Generate TTS audio at natural speed without time constraints."""
     if backend == "edge_tts":
         b = EdgeTTSBackend()
-    elif backend == "macos_say":
-        b = SayBackend()
+    elif backend == "doubao":
+        b = DoubaoTTSBackend()
     else:
         raise ValueError(f"unsupported backend: {backend}")
     
@@ -117,7 +161,8 @@ async def build_elastic_video_from_srt(
     progress: bool = True,
     voice_map: Optional[Dict[str, str]] = None,
     cache_dir: Optional[str] = None,
-    debug_sync: bool = False
+    debug_sync: bool = False,
+    skip_length_check: bool = False
 ) -> Tuple[List[str], List[SRTItem], List[str], Optional[SyncDiagnostics]]:
     """
     Build elastic video pipeline.
@@ -131,12 +176,33 @@ async def build_elastic_video_from_srt(
     Args:
         cache_dir: TTS 缓存目录，如果提供则会缓存 TTS 音频避免重复下载
         debug_sync: 是否生成同步诊断信息
+        skip_length_check: 跳过字符长度检查（默认 False）
     
     Returns:
         Tuple of (audio_segments, new_subtitle_items, video_segments, diagnostics)
         diagnostics 仅在 debug_sync=True 时返回非 None 值
+        
+    Raises:
+        ValueError: 如果存在超过字符阈值的段落且未跳过检查
     """
     total = len(items)
+    
+    # ========== Pre-check: Validate segment character lengths ==========
+    if not skip_length_check and backend == "doubao":
+        oversized = validate_segment_lengths(items, TTS_CHAR_THRESHOLD, backend)
+        if oversized:
+            error_lines = [
+                f"[ELASTIC_VIDEO] 检测到 {len(oversized)} 个段落超过字符阈值 ({TTS_CHAR_THRESHOLD} 字符):",
+                f"[ELASTIC_VIDEO] 这些段落可能导致 Doubao TTS 超时失败，建议重新措辞缩短文本：",
+            ]
+            for seg_idx, char_count, preview in oversized:
+                error_lines.append(f"[ELASTIC_VIDEO]   段落 {seg_idx}: {char_count} 字符 - {preview}")
+            error_lines.append(f"[ELASTIC_VIDEO] 使用 --skip-length-check 可跳过此检查")
+            
+            error_msg = "\n".join(error_lines)
+            if progress:
+                print(error_msg)
+            raise ValueError(f"存在 {len(oversized)} 个段落超过字符阈值 ({TTS_CHAR_THRESHOLD})，请重新措辞或使用 --skip-length-check 跳过检查")
     
     # Setup TTS cache directory
     if cache_dir is None:
@@ -163,10 +229,14 @@ async def build_elastic_video_from_srt(
     # Track blank segments (will use original video duration instead of TTS)
     blank_segments: set = set()
     
-    # ========== Step 1: Generate TTS audio (with caching) ==========
+    # Retry configuration
+    max_retries = 3
+    retry_delay = 2.0  # seconds
+    
+    # ========== Step 1: Generate TTS audio (with caching and retry) ==========
     async def generate_audio(idx: int, it: SRTItem) -> Tuple[int, Optional[str], int, bool]:
         """
-        Generate TTS audio for a segment.
+        Generate TTS audio for a segment with retry logic.
         
         Returns:
             Tuple of (idx, audio_path, duration_ms, is_blank)
@@ -182,7 +252,10 @@ async def build_elastic_video_from_srt(
         
         text_to_speak = clean_text if speaker else it.text
         
-        # Check if text is blank (empty or whitespace-only)
+        # Filter out bracket content like [Music], [音乐], (applause) etc.
+        text_to_speak = remove_bracket_content(text_to_speak)
+        
+        # Check if text is blank (empty or whitespace-only) after filtering
         if not text_to_speak or not text_to_speak.strip():
             # Blank segment: skip TTS, use original video duration
             original_duration_ms = it.end_ms - it.start_ms
@@ -200,21 +273,33 @@ async def build_elastic_video_from_srt(
             duration = audio_duration_ms(cache_path)
             return idx, cache_path, duration, False
         
-        # Generate new TTS
-        async with sem:
-            audio_path = await _synthesize_natural_speed(
-                text_to_speak,
-                chosen_voice,
-                backend,
-                ar
-            )
+        # Generate new TTS with retry
+        last_error = None
+        for attempt in range(max_retries):
+            try:
+                async with sem:
+                    audio_path = await _synthesize_natural_speed(
+                        text_to_speak,
+                        chosen_voice,
+                        backend,
+                        ar
+                    )
+                
+                # Copy to cache
+                import shutil
+                shutil.copy2(audio_path, cache_path)
+                
+                duration = audio_duration_ms(cache_path)
+                return idx, cache_path, duration, False
+            except Exception as e:
+                last_error = e
+                if progress:
+                    print(f"[ELASTIC_VIDEO] Segment {idx+1} TTS failed (attempt {attempt+1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(retry_delay)
         
-        # Copy to cache
-        import shutil
-        shutil.copy2(audio_path, cache_path)
-        
-        duration = audio_duration_ms(cache_path)
-        return idx, cache_path, duration, False
+        # All retries failed
+        raise last_error
     
     # Temporary storage for async results
     temp_audio_paths: List[Optional[str]] = [None] * total

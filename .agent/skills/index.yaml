@@ -12,15 +12,18 @@ skills:
       - "yt-dlp"
     
   - name: semantic_refine
-    description: 语义精炼技能 - 修正翻译错误、优化断句、标注说话人
+    description: 语义精炼技能 - 使用 LLM 修正翻译错误、优化断句、标注说话人（flexdub semantic_refine 命令）
     path: .agent/skills/semantic_refine/SKILL.md
     triggers:
       - "翻译"
       - "断句"
       - "说话人"
       - "术语"
-    scripts:
-      - .agent/skills/semantic_refine/scripts/terminology.py
+      - "语义矫正"
+      - "semantic_refine"
+    cli_commands:
+      - flexdub semantic_refine
+      - flexdub gs_align
     
   - name: auto_dub
     description: 自动化配音技能 - 执行 TTS 合成和音视频合流

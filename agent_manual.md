@@ -34,6 +34,12 @@ flexdub Agent 是端到端配音管线的**中央协调器**。
 ### 4. 强制 QA
 生成任何 SRT 文件后，必须自动执行 `python -m flexdub qa` 检查。
 
+### 5. 数据源优先级（SRT 为主体）
+- **SRT 文件**：完整时间轴的唯一来源，生成的字幕必须覆盖 SRT 全部时间范围
+- **gs.md 文件**：仅作为**参考**，用于校正翻译质量、识别说话人
+- **❌ 禁止**：以 gs.md 的时间戳为基准生成字幕（gs.md 可能不完整）
+- **✅ 必须**：以 SRT 的完整时间轴为基准，gs.md 仅辅助理解内容
+
 ---
 
 ## Agent 行为规范
@@ -44,16 +50,20 @@ flexdub Agent 是端到端配音管线的**中央协调器**。
 - ❌ 跳过 QA 检查直接输出
 - ❌ 猜测参数值
 - ❌ **凭记忆编造 Doubao 音色名**（必须从 API 获取）
+- ❌ **以 gs.md 为主体生成字幕**（gs.md 时间戳可能不完整）
+- ❌ **丢弃 SRT 中的任何时间段**（输出必须覆盖 SRT 全部范围）
 
 ### 必须行为
 - ✅ 使用 MCP 工具与 Python 逻辑交互
 - ✅ 生成 SRT 后自动执行 QA 检查
 - ✅ 遵循决策矩阵选择处理模式
-- ✅ 保留专业术语英文原文
+- ✅ 专有名词首次出现使用 **English（中文翻译）** 格式，后续可用英文简称
 - ✅ 使用 Doubao TTS 时**主动启动服务**（不要求用户手动启动）
 - ✅ **先调用 `/speakers` API 获取有效音色列表**，再选择音色
 - ✅ 根据角色上下文（性别、性格）**自动选择差异明显的音色**
 - ✅ 只使用 **API 返回的精确音色名**（不要修改或简化）
+- ✅ **以 SRT 为主体生成 TTS 字幕**（完整覆盖 SRT 时间范围）
+- ✅ **gs.md 仅作参考**（用于说话人识别、翻译校正，不作为时间轴来源）
 
 ---
 
@@ -130,16 +140,22 @@ flexdub Agent 是端到端配音管线的**中央协调器**。
 
 ```bash
 # 项目验证
-python -m flexdub validate_project <project_dir>
+flexdub validate_project <project_dir>
 
 # 质量检查
-python -m flexdub qa <srt> --voice-map voice_map.json
+flexdub qa <srt> --voice-map voice_map.json
 
 # CPM 审计
-python -m flexdub audit <srt> --min-cpm 180 --max-cpm 300
+flexdub audit <srt> --min-cpm 180 --max-cpm 300
 
 # 同步审计
-python -m flexdub sync_audit <video> <srt>
+flexdub sync_audit <video> <srt>
+
+# GS 语义矫正（LLM 驱动）
+flexdub semantic_refine <gs.md> <srt> -o <output.refined.audio.srt> --include-speaker-tags
+
+# GS 时间轴对齐（无需 LLM）
+flexdub gs_align <gs.md> <srt> -o <output.audio.srt> --extract-glossary
 ```
 
 ---
@@ -235,12 +251,12 @@ skill = loader.load_skill("video_download")  # 加载完整内容
 
 ### 技能索引
 
-| 技能 | 触发词 | MCP 工具 | 用途 |
+| 技能 | 触发词 | CLI 命令 | 用途 |
 |------|--------|----------|------|
 | `video_download` | 下载、YouTube、yt-dlp | - | 视频下载 |
-| `semantic_refine` | 翻译、断句、说话人、术语 | - | 语义精炼 |
-| `auto_dub` | 配音、dub、TTS | `analyze_project`, `run_qa_check` | 自动化配音 |
-| `diagnosis` | 错误、失败、诊断 | `diagnose_error` | 故障诊断 |
+| `semantic_refine` | 翻译、断句、说话人、术语、语义矫正 | `flexdub semantic_refine`, `flexdub gs_align` | 语义精炼 |
+| `auto_dub` | 配音、dub、TTS | `flexdub merge` | 自动化配音 |
+| `diagnosis` | 错误、失败、诊断 | `flexdub qa`, `flexdub audit` | 故障诊断 |
 
 ### 激活流程
 
@@ -288,7 +304,7 @@ result = call_tool("diagnose_error", {"error_report": "path/to/error.json"})
 2. 字幕预处理 → 检测滚动式字幕并清理
 3. 项目验证 → validate_project
 4. 语义重构 → LLM 阶段（翻译 + 断句）
-5. SRT 融合 → 结合 gs.md + 清理后 SRT 生成 TTS 用 SRT
+5. 生成 TTS 字幕 → semantic_refine（推荐）或 gs_align
 6. QA 检查 → run_qa_check (MCP)
 7. 配音合成 → Script 阶段
 8. 质量审计 → audit / sync_audit
@@ -308,25 +324,83 @@ YouTube 自动字幕使用"滚动式"格式，需要检测并清理：
 python scripts/clean_youtube_srt.py <input.srt> [output.srt]
 ```
 
-### Step 5: SRT 融合（详细）
+### Step 5: 生成 TTS 字幕（详细）
 
-当项目目录存在 `gs.md`（人工校对的逐字稿）时，采用融合策略：
+生成符合 TTS 要求的 `audio.srt` 文件。
 
-**输入**：
-- `gs.md`：内容准确（人工翻译/校对），时间戳粗略
-- `*.srt`（清理后）：时间准确（来自 YouTube），内容可能有误
+**⚠️ 核心原则：gs.md 提供翻译质量，SRT 提供精确时间轴**
 
-**融合逻辑**：
-1. 从 `gs.md` 提取带时间戳的文本段落
-2. 从清理后的 SRT 提取精确时间轴
-3. 对齐两者，生成最终 `audio.srt`
-4. 如有多说话人，同时生成 `voice_map.json`
+#### 方案 A: LLM 语义矫正（推荐）- `flexdub semantic_refine`
+
+当项目目录存在 `gs.md` 时，使用 LLM 驱动的语义矫正：
+
+```bash
+# 使用 gs.md 作为背景上下文，LLM 矫正 SRT 翻译
+flexdub semantic_refine <gs.md> <原始.srt> \
+  -o <output.refined.audio.srt> \
+  --include-speaker-tags \
+  --checkpoint-dir ./checkpoints
+```
+
+**semantic_refine 功能**：
+1. **上下文提取**：从 gs.md 提取术语表、说话人、关键概念
+2. **分段处理**：大文件自动分成 20-50 条目的 chunks
+3. **LLM 矫正**：逐段调用 LLM 进行翻译矫正
+4. **本地化审查**：检查字符长度（75 字符限制）、直译问题
+5. **检查点恢复**：支持中断后继续处理
+
+**环境变量配置**：
+```bash
+export FLEXDUB_LLM_API_KEY="your-api-key"
+export FLEXDUB_LLM_BASE_URL="https://api.openai.com/v1/chat/completions"
+export FLEXDUB_LLM_MODEL="gpt-4o-mini"
+```
 
 **输出**：
-- `<basename>.audio.srt`：TTS 用字幕（精确时间 + 准确内容）
-- `voice_map.json`：说话人映射（如有多人）
+- `<basename>.refined.audio.srt`：语义矫正后的 TTS 字幕
+- `<basename>.terminology.yaml`：术语表报告
+- `<basename>.processing.log`：处理日志
 
-详细步骤说明参见：`.agent/workflows/dubbing.md`
+#### 方案 B: 时间轴对齐（无需 LLM）- `flexdub gs_align`
+
+如果只需要时间轴对齐，无需 LLM 矫正：
+
+```bash
+# 将 gs.md 的高质量翻译与 SRT 的精确时间轴对齐
+flexdub gs_align <gs.md> <原始.srt> \
+  -o <output.audio.srt> \
+  --extract-glossary \
+  --fuzzy-window-ms 3000
+```
+
+**gs_align 算法**：
+1. **解析 gs.md**：提取 `### [MM:SS] Speaker` 格式的段落
+2. **锚点匹配**：用 gs.md 的时间戳定位到 SRT 区间（±3秒模糊窗口）
+3. **文本替换**：用 gs.md 的翻译文本替换 SRT 的机翻文本
+4. **时间轴继承**：保留 SRT 的精确时间轴
+5. **长段落拆分**：满足 75 字符 / 15 秒限制
+
+**输出**：
+- `<basename>.audio.srt`：TTS 用字幕（gs.md 翻译 + SRT 时间轴 + 说话人标签）
+- `voice_map.json`：说话人音色映射
+- `glossary.yaml`：自动提取的术语表（可选，使用 `--extract-glossary`）
+
+#### 翻译质量对比
+
+| 原始 SRT (机翻) | semantic_refine / gs_align 输出 |
+|----------------|--------------------------------|
+| "音乐] 好的，所以诺亚让我谈谈我" | "好的。Noah（诺亚）让我来谈谈..." |
+| "呃，尝试将被称为修辞学的哲学领域操作化" | "修辞学"（Rhetoric）这一哲学领域进行"可操作化" |
+| 碎片化断句，口语填充词 | 完整语义句子，术语规范 |
+
+**验证**：
+```bash
+flexdub qa <audio.srt> --voice-map voice_map.json
+```
+
+**无 gs.md 时的备选方案**：
+- 手动翻译或使用其他翻译工具
+- 详见：`.agent/skills/semantic_refine/SKILL.md`
 
 ---
 
@@ -346,7 +420,7 @@ python scripts/clean_youtube_srt.py <input.srt> [output.srt]
 ├── config.md           # 认知配置（核心原则、行为规范）
 ├── loader.py           # 技能加载器（渐进式披露实现）
 ├── workflows/          # 工作流定义
-│   └── dubbing.md      # 配音工作流（6 步）
+│   └── dubbing.md      # 配音工作流（8 步）
 └── skills/             # 技能包
     ├── index.yaml      # 技能索引（第一层元数据）
     ├── video_download/ # 视频下载技能

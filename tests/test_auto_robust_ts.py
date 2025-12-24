@@ -41,9 +41,9 @@ def test_auto_robust_ts_injection(monkeypatch, tmp_path):
         srt_path,
         os.path.join(tmp_path, "v.mp4"),
         "--backend",
-        "macos_say",
+        "edge_tts",
         "--voice",
-        "Ting-Ting",
+        "zh-CN-YunjianNeural",
         "--no-progress",
     ])
     assert rc == 0

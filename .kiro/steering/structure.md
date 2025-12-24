@@ -50,6 +50,8 @@ scripts/                # Utility scripts
 - `rebalance.py`: CPM-based timeline optimization with borrowing and panic mode
 - `audio.py`: Elastic audio pipeline (silence removal, stretch/pad, concat, mux)
 - `lang.py`: Language detection and voice recommendation
+- `gs_align.py`: gs.md 与 SRT 时间轴对齐（锚点匹配算法）
+- `semantic_refine.py`: GS 语义矫正 SRT 翻译（LLM 驱动）
 
 ### Pipelines (`flexdub/pipelines/dubbing.py`)
 - `build_audio_from_srt`: Per-segment TTS synthesis
@@ -67,6 +69,9 @@ scripts/                # Utility scripts
 
 - `SRTItem(start_ms, end_ms, text)` - Core subtitle representation
 - `Segment(start_ms, end_ms, text)` - Rebalancing data structure
+- `SemanticContext` - gs.md 语义上下文（术语、说话人、关键概念）
+- `RefinedSRTItem` - 矫正后的 SRT 条目（含说话人、矫正状态）
+- `Chunk` - 分段处理单元（用于大文件处理）
 
 ## Standard Project Structure
 
@@ -82,6 +87,9 @@ Validation: `flexdub validate_project <project_dir>`
 - `<basename>.rebalance.srt` - Rebalanced subtitle
 - `<basename>.display.srt` - Display-optimized subtitle (dual-track mode)
 - `<basename>.audio.srt` - TTS-optimized subtitle (dual-track mode)
+- `<basename>.refined.audio.srt` - 语义矫正后的 SRT（semantic_refine 输出）
+- `<basename>.terminology.yaml` - 术语表报告（semantic_refine 输出）
+- `<basename>.processing.log` - 处理日志（semantic_refine 输出）
 - `cpm.csv` - CPM audit report
 - `process.log` - Processing log
 - `report.json` - Validation and metadata
